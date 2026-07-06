@@ -12,6 +12,12 @@ import WishlistForm from './pages/WishlistForm'
 import Audicoes from './pages/Audicoes'
 import AudicaoForm from './pages/AudicaoForm'
 import Mais from './pages/Mais'
+import Dashboards from './pages/Dashboards'
+import DashboardAudicoes from './pages/DashboardAudicoes'
+import DashboardFinanceiro from './pages/DashboardFinanceiro'
+import DashboardWishlist from './pages/DashboardWishlist'
+import DashboardArtistas from './pages/DashboardArtistas'
+import DashboardMusicos from './pages/DashboardMusicos'
 
 function RotaProtegida() {
   const { autenticado } = useAuth()
@@ -37,6 +43,12 @@ function App() {
           <Route path="/audicoes" element={<Audicoes />} />
           <Route path="/audicoes/nova" element={<AudicaoForm />} />
           <Route path="/audicoes/:id/editar" element={<AudicaoForm />} />
+          <Route path="/dashboards" element={<Dashboards />} />
+          <Route path="/dashboards/audicoes" element={<DashboardAudicoes />} />
+          <Route path="/dashboards/financeiro" element={<DashboardFinanceiro />} />
+          <Route path="/dashboards/wishlist" element={<DashboardWishlist />} />
+          <Route path="/dashboards/artistas" element={<DashboardArtistas />} />
+          <Route path="/dashboards/musicos" element={<DashboardMusicos />} />
           <Route path="/mais" element={<Mais />} />
           <Route path="/configuracoes" element={<Configuracoes />} />
         </Route>

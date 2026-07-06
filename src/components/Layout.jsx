@@ -1,11 +1,12 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Settings, Disc3, Library, Heart, Headphones, MoreHorizontal } from 'lucide-react'
+import { Settings, Disc3, Library, Heart, Headphones, LayoutDashboard, MoreHorizontal } from 'lucide-react'
 import { ENTIDADES } from '../api/entidades'
 
 const ABAS_MOBILE = [
   { to: '/', label: 'Coleção', icon: Library, ativo: (path) => path === '/' || path.startsWith('/discos') },
   { to: '/wishlist', label: 'Wishlist', icon: Heart, ativo: (path) => path.startsWith('/wishlist') },
   { to: '/audicoes', label: 'Audições', icon: Headphones, ativo: (path) => path.startsWith('/audicoes') },
+  { to: '/dashboards', label: 'Dashboards', icon: LayoutDashboard, ativo: (path) => path.startsWith('/dashboards') },
   {
     to: '/mais',
     label: 'Mais',
@@ -69,6 +70,18 @@ export default function Layout() {
             }`}
           >
             <Headphones className="w-4 h-4" />
+          </Link>
+          <Link
+            to="/dashboards"
+            title="Dashboards"
+            aria-label="Dashboards"
+            className={`shrink-0 p-2 rounded-full border transition-colors ${
+              location.pathname.startsWith('/dashboards')
+                ? 'bg-accent text-accent-contrast border-accent'
+                : 'border-border-strong text-muted hover:border-accent hover:text-accent'
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4" />
           </Link>
           {Object.entries(ENTIDADES).map(([key, cfg]) => {
             const to = `/cadastros/${key}`
