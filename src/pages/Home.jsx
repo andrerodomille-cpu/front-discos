@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Search, LayoutGrid, List, Disc3, Wallet, Mic2 } from 'lucide-react'
+import { Plus, Search, LayoutGrid, List, Disc3, Headphones, CalendarClock, Star } from 'lucide-react'
 import api from '../api/client'
 import DiscoCard from '../components/DiscoCard'
 import DiscoListItem from '../components/DiscoListItem'
@@ -29,24 +29,13 @@ function compararDiscos(a, b, ordenacao) {
   }
 }
 
-function calcularEstatisticas(discos) {
-  const total = discos.length
-  const valorInvestido = discos.reduce((soma, d) => soma + (Number(d.valor_pago) || 0), 0)
+function formatarDataAudicao(data) {
+  return new Date(data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+}
 
-  const contagemArtistas = {}
-  discos.forEach((d) => {
-    if (d.artista_nome) contagemArtistas[d.artista_nome] = (contagemArtistas[d.artista_nome] || 0) + 1
-  })
-  let artistaTop = null
-  let maxContagem = 0
-  for (const [nome, contagem] of Object.entries(contagemArtistas)) {
-    if (contagem > maxContagem) {
-      artistaTop = nome
-      maxContagem = contagem
-    }
-  }
-
-  return { total, valorInvestido, artistaTop }
+function contarAudicoesRecentes(audicoes) {
+  const limite = Date.now() - 30 * 24 * 60 * 60 * 1000
+  return audicoes.filter((a) => new Date(a.data_audicao).getTime() >= limite).length
 }
 
 export default function Home() {
@@ -58,10 +47,18 @@ export default function Home() {
   const [ordenacao, setOrdenacao] = useState('recentes')
   const [filtroGenero, setFiltroGenero] = useState('')
   const [filtroFormato, setFiltroFormato] = useState('')
+  const [audicoes, setAudicoes] = useState([])
 
   useEffect(() => {
     localStorage.setItem('visualizacaoDiscos', visualizacao)
   }, [visualizacao])
+
+  useEffect(() => {
+    api
+      .get('/audicoes')
+      .then((res) => setAudicoes(res.data))
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     let ativo = true
@@ -92,7 +89,13 @@ export default function Home() {
     [discos],
   )
 
-  const estatisticas = useMemo(() => calcularEstatisticas(discos), [discos])
+  const ultimaAudicao = audicoes.length > 0 ? audicoes[0] : null
+  const audicoesRecentes = useMemo(() => contarAudicoesRecentes(audicoes), [audicoes])
+
+  const capaUltimaAudicao = useMemo(() => {
+    if (!ultimaAudicao) return null
+    return discos.find((d) => d.id_disco === ultimaAudicao.id_disco)?.url_capa || null
+  }, [discos, ultimaAudicao])
 
   const discosFiltrados = useMemo(() => {
     const termo = busca.trim().toLowerCase()
@@ -114,32 +117,66 @@ export default function Home() {
   return (
     <div className="pb-16 sm:pb-14">
       {!loading && !erro && discos.length > 0 && (
-        <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
-          <div className="bg-surface border border-border rounded-xl p-3 flex flex-col gap-1 min-w-0">
-            <div className="flex items-center gap-1.5 text-muted">
-              <Disc3 className="w-3.5 h-3.5 text-accent shrink-0" />
-              <span className="text-xs truncate">Discos</span>
+        <div className="flex flex-col gap-3 mb-6">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="bg-surface border border-border rounded-xl p-3 flex flex-col gap-1 min-w-0">
+              <div className="flex items-center gap-1.5 text-muted">
+                <Disc3 className="w-3.5 h-3.5 text-accent shrink-0" />
+                <span className="text-xs truncate">Discos</span>
+              </div>
+              <span className="text-lg sm:text-xl font-semibold truncate">{discos.length}</span>
             </div>
-            <span className="text-lg sm:text-xl font-semibold truncate">{estatisticas.total}</span>
-          </div>
-          <div className="bg-surface border border-border rounded-xl p-3 flex flex-col gap-1 min-w-0">
-            <div className="flex items-center gap-1.5 text-muted">
-              <Wallet className="w-3.5 h-3.5 text-accent shrink-0" />
-              <span className="text-xs truncate">Investido</span>
+            <div className="bg-surface border border-border rounded-xl p-3 flex flex-col gap-1 min-w-0">
+              <div className="flex items-center gap-1.5 text-muted">
+                <CalendarClock className="w-3.5 h-3.5 text-accent shrink-0" />
+                <span className="text-xs truncate">Audições (30 dias)</span>
+              </div>
+              <span className="text-lg sm:text-xl font-semibold truncate">{audicoesRecentes}</span>
             </div>
-            <span className="text-lg sm:text-xl font-semibold truncate">
-              {estatisticas.valorInvestido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })}
-            </span>
           </div>
-          <div className="bg-surface border border-border rounded-xl p-3 flex flex-col gap-1 min-w-0">
-            <div className="flex items-center gap-1.5 text-muted">
-              <Mic2 className="w-3.5 h-3.5 text-accent shrink-0" />
-              <span className="text-xs truncate">Top artista</span>
+
+          <Link
+            to="/audicoes"
+            className="bg-surface border border-border rounded-xl p-3 flex items-center gap-3 hover:border-accent transition-colors"
+          >
+            <div className="w-12 h-12 rounded-lg bg-surface-2 flex items-center justify-center overflow-hidden shrink-0">
+              {capaUltimaAudicao ? (
+                <img
+                  src={capaUltimaAudicao}
+                  alt=""
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              ) : (
+                <Headphones className="w-5 h-5 text-faint" />
+              )}
             </div>
-            <span className="text-lg sm:text-xl font-semibold truncate" title={estatisticas.artistaTop || ''}>
-              {estatisticas.artistaTop || '—'}
-            </span>
-          </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 text-muted mb-0.5">
+                <Headphones className="w-3.5 h-3.5 text-accent shrink-0" />
+                <span className="text-xs">Última audição</span>
+              </div>
+              {ultimaAudicao ? (
+                <>
+                  <p className="text-sm font-semibold truncate">{ultimaAudicao.disco_titulo || 'Disco removido'}</p>
+                  <p className="text-xs text-muted truncate">
+                    {[ultimaAudicao.artista_nome, formatarDataAudicao(ultimaAudicao.data_audicao), ultimaAudicao.local]
+                      .filter(Boolean)
+                      .join(' • ')}
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm text-faint">Nenhuma audição registrada ainda.</p>
+              )}
+            </div>
+            {ultimaAudicao?.nota ? (
+              <span className="flex items-center gap-1 text-xs text-amber-500 shrink-0">
+                <Star className="w-3.5 h-3.5 fill-amber-500" /> {ultimaAudicao.nota}
+              </span>
+            ) : null}
+          </Link>
         </div>
       )}
 
