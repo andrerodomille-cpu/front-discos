@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import { Settings, Disc3, Library, Heart, Headphones, MoreHorizontal } from 'lucide-react'
 import { ENTIDADES } from '../api/entidades'
 
@@ -14,7 +14,7 @@ const ABAS_MOBILE = [
   },
 ]
 
-export default function Layout({ children }) {
+export default function Layout() {
   const location = useLocation()
 
   return (
@@ -93,7 +93,9 @@ export default function Layout({ children }) {
         </nav>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 pt-6 pb-20 sm:pb-6">{children}</main>
+      <main className="max-w-5xl mx-auto px-4 pt-6 pb-20 sm:pb-6">
+        <Outlet />
+      </main>
 
       <nav className="sm:hidden fixed bottom-0 inset-x-0 z-20 bg-surface/95 backdrop-blur border-t border-border pb-[env(safe-area-inset-bottom)]">
         <div className="flex items-stretch justify-around">

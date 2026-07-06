@@ -1,5 +1,7 @@
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useAuth } from './context/AuthContext'
 import Layout from './components/Layout'
+import Login from './pages/Login'
 import Home from './pages/Home'
 import DiscoForm from './pages/DiscoForm'
 import DiscoDetalhe from './pages/DiscoDetalhe'
@@ -11,11 +13,19 @@ import Audicoes from './pages/Audicoes'
 import AudicaoForm from './pages/AudicaoForm'
 import Mais from './pages/Mais'
 
+function RotaProtegida() {
+  const { autenticado } = useAuth()
+  const location = useLocation()
+  if (!autenticado) return <Navigate to="/login" state={{ from: location }} replace />
+  return <Layout />
+}
+
 function App() {
   return (
     <HashRouter>
-      <Layout>
-        <Routes>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route element={<RotaProtegida />}>
           <Route path="/" element={<Home />} />
           <Route path="/discos/novo" element={<DiscoForm />} />
           <Route path="/discos/:id/editar" element={<DiscoForm />} />
@@ -29,8 +39,8 @@ function App() {
           <Route path="/audicoes/:id/editar" element={<AudicaoForm />} />
           <Route path="/mais" element={<Mais />} />
           <Route path="/configuracoes" element={<Configuracoes />} />
-        </Routes>
-      </Layout>
+        </Route>
+      </Routes>
     </HashRouter>
   )
 }
