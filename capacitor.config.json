@@ -1,0 +1,11 @@
+{
+  "appId": "com.colecaodiscos.app",
+  "appName": "Coleção de Discos",
+  "webDir": "dist",
+  "android": {
+    "allowMixedContent": true
+  },
+  "server": {
+    "cleartext": true
+  }
+}

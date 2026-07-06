@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Coleção de Discos</string>
+    <string name="title_activity_main">Coleção de Discos</string>
+    <string name="package_name">com.colecaodiscos.app</string>
+    <string name="custom_url_scheme">com.colecaodiscos.app</string>
+</resources>
