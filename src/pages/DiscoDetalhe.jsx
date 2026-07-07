@@ -89,10 +89,13 @@ export default function DiscoDetalhe() {
     disco.primeira_prensagem && 'Primeira prensagem',
     disco.importado && 'Importado',
     disco.mono && 'Mono',
+    disco.coletanea && 'Coletânea',
+    disco._180gramas && '180 gramas',
   ].filter(Boolean)
 
   const temDetalhesTecnicos = Boolean(
-    disco.quantidade_discos || disco.rpm || disco.diametro_polegadas || disco.cor_vinil || disco.pais_origem || flags.length > 0,
+    disco.quantidade_discos || disco.rpm || disco.diametro_polegadas || disco.cor_vinil ||
+      disco.ano_prensagem || disco.pais_origem || flags.length > 0,
   )
   const temEstadoAvaliacao = Boolean(disco.estado_vinil || disco.estado_capa || disco.resenha)
   const temAquisicao = Boolean(
@@ -167,6 +170,7 @@ export default function DiscoDetalhe() {
             <Item label="RPM" value={disco.rpm} />
             <Item label="Diâmetro" value={disco.diametro_polegadas ? `${disco.diametro_polegadas}"` : null} />
             <Item label="Cor do vinil" value={disco.cor_vinil} />
+            <Item label="Ano da prensagem" value={disco.ano_prensagem} />
             <Item label="País de origem" value={disco.pais_origem} />
             {flags.length > 0 && (
               <div className="flex flex-col gap-0.5 col-span-2 sm:col-span-3">

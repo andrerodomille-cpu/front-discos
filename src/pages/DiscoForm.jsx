@@ -16,10 +16,13 @@ const ESTADO_INICIAL = {
   rpm: '',
   diametro_polegadas: '',
   cor_vinil: '',
+  ano_prensagem: '',
   pais_origem: '',
   primeira_prensagem: false,
   importado: false,
   mono: false,
+  coletanea: false,
+  _180gramas: false,
   estado_vinil: '',
   estado_capa: '',
   url_capa: '',
@@ -110,10 +113,13 @@ export default function DiscoForm() {
             rpm: d.rpm ?? '',
             diametro_polegadas: d.diametro_polegadas ?? '',
             cor_vinil: d.cor_vinil ?? '',
+            ano_prensagem: d.ano_prensagem ?? '',
             pais_origem: d.pais_origem ?? '',
             primeira_prensagem: Boolean(d.primeira_prensagem),
             importado: Boolean(d.importado),
             mono: Boolean(d.mono),
+            coletanea: Boolean(d.coletanea),
+            _180gramas: Boolean(d._180gramas),
             estado_vinil: d.estado_vinil ?? '',
             estado_capa: d.estado_capa ?? '',
             url_capa: d.url_capa ?? '',
@@ -166,10 +172,13 @@ export default function DiscoForm() {
       rpm: numOuNulo(form.rpm),
       diametro_polegadas: numOuNulo(form.diametro_polegadas),
       cor_vinil: form.cor_vinil || null,
+      ano_prensagem: numOuNulo(form.ano_prensagem),
       pais_origem: form.pais_origem || null,
       primeira_prensagem: form.primeira_prensagem,
       importado: form.importado,
       mono: form.mono,
+      coletanea: form.coletanea,
+      _180gramas: form._180gramas,
       estado_vinil: form.estado_vinil || null,
       estado_capa: form.estado_capa || null,
       url_capa: form.url_capa || null,
@@ -322,6 +331,9 @@ export default function DiscoForm() {
           <Field label="Cor do vinil">
             <input value={form.cor_vinil} onChange={set('cor_vinil')} className={inputClass} />
           </Field>
+          <Field label="Ano da prensagem">
+            <input type="number" value={form.ano_prensagem} onChange={set('ano_prensagem')} className={inputClass} />
+          </Field>
           <Field label="País de origem">
             <input value={form.pais_origem} onChange={set('pais_origem')} className={inputClass} />
           </Field>
@@ -346,6 +358,14 @@ export default function DiscoForm() {
             <label className="flex items-center gap-2 text-sm text-muted">
               <input type="checkbox" checked={form.mono} onChange={set('mono')} />
               Mono
+            </label>
+            <label className="flex items-center gap-2 text-sm text-muted">
+              <input type="checkbox" checked={form.coletanea} onChange={set('coletanea')} />
+              Coletânea
+            </label>
+            <label className="flex items-center gap-2 text-sm text-muted">
+              <input type="checkbox" checked={form._180gramas} onChange={set('_180gramas')} />
+              180 gramas
             </label>
           </div>
         </Secao>
