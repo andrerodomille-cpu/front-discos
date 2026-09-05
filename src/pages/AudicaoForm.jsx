@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { Loader2, Trash2, ArrowLeft } from 'lucide-react'
 import api from '../api/client'
+import ComboBox from '../components/ComboBox'
 
 const inputClass =
   'bg-surface border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent'
@@ -68,6 +69,17 @@ export default function AudicaoForm() {
   const set = (campo) => (e) => {
     setForm((prev) => ({ ...prev, [campo]: e.target.value }))
   }
+
+  const opcoesDiscos = useMemo(
+    () =>
+      [...discos]
+        .sort((a, b) => a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' }))
+        .map((d) => ({
+          value: d.id_disco,
+          label: d.artista_nome ? `${d.titulo} — ${d.artista_nome}` : d.titulo,
+        })),
+    [discos],
+  )
 
   const salvar = async (e) => {
     e.preventDefault()
@@ -140,14 +152,12 @@ export default function AudicaoForm() {
 
       <form onSubmit={salvar} className="flex flex-col gap-4">
         <Field label="Disco *">
-          <select value={form.id_disco} onChange={set('id_disco')} required className={inputClass}>
-            <option value="">Selecione...</option>
-            {discos.map((d) => (
-              <option key={d.id_disco} value={d.id_disco}>
-                {d.titulo} {d.artista_nome ? `— ${d.artista_nome}` : ''}
-              </option>
-            ))}
-          </select>
+          <ComboBox
+            options={opcoesDiscos}
+            value={form.id_disco}
+            onChange={(value) => setForm((prev) => ({ ...prev, id_disco: value }))}
+            placeholder="Busque pelo título..."
+          />
         </Field>
         <Field label="Data e hora">
           <input type="datetime-local" value={form.data_audicao} onChange={set('data_audicao')} className={inputClass} />
