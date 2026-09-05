@@ -9,8 +9,20 @@ function formatarData(data) {
 export default function AudicaoItem({ audicao, onRemover }) {
   return (
     <div className="flex items-center gap-3 px-3 py-2.5 hover:bg-surface-2 transition-colors">
-      <div className="w-9 h-9 rounded bg-surface-2 flex items-center justify-center shrink-0">
-        <Disc3 className="w-4 h-4 text-faint" />
+      <div className="w-9 h-9 rounded bg-surface-2 flex items-center justify-center overflow-hidden shrink-0">
+        {audicao.disco_capa ? (
+          <img
+            src={audicao.disco_capa}
+            alt={audicao.disco_titulo || ''}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none'
+            }}
+          />
+        ) : (
+          <Disc3 className="w-4 h-4 text-faint" />
+        )}
       </div>
       <Link to={`/audicoes/${audicao.id_audicao}/editar`} className="flex-1 min-w-0">
         <p className="font-medium text-sm truncate">{audicao.disco_titulo || 'Disco removido'}</p>
