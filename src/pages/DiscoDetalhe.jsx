@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, Pencil, Trash2, Disc3, Star, Loader2, Check } from 'lucide-react'
+import { ArrowLeft, Pencil, Trash2, Disc3, Star, Loader2 } from 'lucide-react'
 import api from '../api/client'
+import SectionHeading from '../components/SectionHeading'
 
 function formatarData(data) {
   if (!data) return null
@@ -13,22 +14,14 @@ function formatarValor(valor) {
   return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
-function Item({ label, value }) {
-  if (value === null || value === undefined || value === '') return null
+function Linha({ label, valor, ident }) {
+  if (valor === null || valor === undefined || valor === '') return null
   return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-xs text-muted">{label}</span>
-      <span className="text-sm">{value}</span>
+    <div className="u-credit">
+      <span className="k">{label}</span>
+      <span className="fill" />
+      <span className={`v ${ident ? 'u-ident' : ''}`}>{valor}</span>
     </div>
-  )
-}
-
-function Secao({ titulo, children }) {
-  return (
-    <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold text-accent uppercase tracking-wide">{titulo}</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">{children}</div>
-    </section>
   )
 }
 
@@ -46,11 +39,8 @@ export default function DiscoDetalhe() {
       .get('/discos')
       .then((res) => {
         const encontrado = res.data.find((d) => String(d.id_disco) === id)
-        if (!encontrado) {
-          setErro('Disco não encontrado.')
-        } else {
-          setDisco(encontrado)
-        }
+        if (!encontrado) setErro('Disco não encontrado.')
+        else setDisco(encontrado)
       })
       .catch((err) => setErro(err.response?.data?.error || err.message))
       .finally(() => setCarregando(false))
@@ -68,8 +58,8 @@ export default function DiscoDetalhe() {
 
   if (carregando) {
     return (
-      <div className="flex items-center justify-center py-20 text-faint gap-2">
-        <Loader2 className="w-5 h-5 animate-spin" /> Carregando...
+      <div className="flex items-center justify-center gap-2 py-20 text-faint">
+        <Loader2 className="h-5 w-5 animate-spin" /> Carregando…
       </div>
     )
   }
@@ -77,10 +67,10 @@ export default function DiscoDetalhe() {
   if (erro || !disco) {
     return (
       <div>
-        <Link to="/" className="flex items-center gap-2 text-sm text-muted hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Voltar
+        <Link to="/" className="mb-6 flex items-center gap-2 text-sm text-muted hover:text-foreground">
+          <ArrowLeft className="h-4 w-4" /> Voltar
         </Link>
-        <p className="text-red-500 text-sm">{erro || 'Disco não encontrado.'}</p>
+        <p className="text-sm text-red-500">{erro || 'Disco não encontrado.'}</p>
       </div>
     )
   }
@@ -91,6 +81,13 @@ export default function DiscoDetalhe() {
     disco.mono && 'Mono',
     disco.coletanea && 'Coletânea',
     disco._180gramas && '180 gramas',
+  ].filter(Boolean)
+
+  const specs = [
+    disco.formato_nome,
+    disco.diametro_polegadas && `${disco.diametro_polegadas}″`,
+    disco.mono && 'Mono',
+    disco.ano_lancamento,
   ].filter(Boolean)
 
   const temDetalhesTecnicos = Boolean(
@@ -105,134 +102,127 @@ export default function DiscoDetalhe() {
 
   return (
     <div className="max-w-3xl">
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-8 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 text-sm text-muted hover:text-foreground">
-          <ArrowLeft className="w-4 h-4" /> Voltar
+          <ArrowLeft className="h-4 w-4" /> Voltar
         </Link>
         <div className="flex items-center gap-4">
-          <Link
-            to={`/discos/${id}/editar`}
-            className="flex items-center gap-2 text-sm text-accent hover:text-accent-hover"
-          >
-            <Pencil className="w-4 h-4" /> Editar
+          <Link to={`/discos/${id}/editar`} className="flex items-center gap-1.5 text-sm text-accent hover:text-accent-hover">
+            <Pencil className="h-4 w-4" /> Editar
           </Link>
-          <button
-            type="button"
-            onClick={excluir}
-            className="flex items-center gap-2 text-sm text-red-500 hover:text-red-600"
-          >
-            <Trash2 className="w-4 h-4" /> Excluir
+          <button type="button" onClick={excluir} className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-600">
+            <Trash2 className="h-4 w-4" /> Excluir
           </button>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-6 mb-8">
-        <div className="w-full sm:w-56 h-56 rounded-xl bg-surface-2 border border-border flex items-center justify-center overflow-hidden shrink-0 mx-auto sm:mx-0">
+      <div className="mb-9 flex flex-col gap-6 sm:flex-row sm:gap-7">
+        <div className="u-sleeve mx-auto flex aspect-square w-full max-w-[15rem] shrink-0 items-center justify-center overflow-hidden sm:mx-0 sm:w-56">
           {disco.url_capa ? (
             <img
               src={disco.url_capa}
               alt={disco.titulo}
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
               onError={(e) => {
                 e.currentTarget.style.display = 'none'
               }}
             />
           ) : (
-            <Disc3 className="w-16 h-16 text-faint" />
+            <Disc3 className="h-16 w-16 text-faint" />
           )}
         </div>
-        <div className="flex flex-col gap-2 justify-center text-center sm:text-left">
-          <h1 className="text-2xl font-semibold leading-tight">{disco.titulo}</h1>
-          <p className="text-muted">{disco.artista_nome || 'Artista desconhecido'}</p>
-          <div className="flex flex-wrap gap-2 justify-center sm:justify-start mt-1">
-            {disco.genero_nome && (
-              <span className="text-xs px-2 py-1 rounded-full border border-border-strong text-muted">{disco.genero_nome}</span>
+        <div className="flex flex-col justify-center gap-2 text-center sm:text-left">
+          <h1 className="text-[clamp(1.7rem,4.5vw,2.5rem)]">{disco.titulo}</h1>
+          <p className="text-lg text-muted">{disco.artista_nome || 'Artista desconhecido'}</p>
+          {specs.length > 0 && (
+            <p className="mt-0.5 text-sm text-faint">{specs.join('  ·  ')}</p>
+          )}
+          <div className="mt-2 flex flex-wrap justify-center gap-2 sm:justify-start">
+            {disco.estado_vinil && (
+              <span className="border border-border-strong px-2 py-0.5 text-xs text-muted">Vinil · {disco.estado_vinil}</span>
             )}
-            {disco.formato_nome && (
-              <span className="text-xs px-2 py-1 rounded-full border border-border-strong text-muted">{disco.formato_nome}</span>
-            )}
-            {disco.ano_lancamento && (
-              <span className="text-xs px-2 py-1 rounded-full border border-border-strong text-muted">{disco.ano_lancamento}</span>
+            {disco.estado_capa && (
+              <span className="border border-border-strong px-2 py-0.5 text-xs text-muted">Capa · {disco.estado_capa}</span>
             )}
             {disco.avaliacao ? (
-              <span className="flex items-center gap-1 text-xs px-2 py-1 rounded-full border border-border-strong text-amber-500">
-                <Star className="w-3 h-3 fill-amber-500" /> {disco.avaliacao}
+              <span className="flex items-center gap-1 border border-border-strong px-2 py-0.5 text-xs text-amber-500">
+                <Star className="h-3 w-3 fill-amber-500" /> {disco.avaliacao}
               </span>
             ) : null}
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-9">
         {temDetalhesTecnicos && (
-          <Secao titulo="Detalhes técnicos">
-            <Item label="Quantidade de discos" value={disco.quantidade_discos} />
-            <Item label="RPM" value={disco.rpm} />
-            <Item label="Diâmetro" value={disco.diametro_polegadas ? `${disco.diametro_polegadas}"` : null} />
-            <Item label="Cor do vinil" value={disco.cor_vinil} />
-            <Item label="Ano da prensagem" value={disco.ano_prensagem} />
-            <Item label="País de origem" value={disco.pais_origem} />
+          <section className="flex flex-col gap-3">
+            <SectionHeading>Detalhes técnicos</SectionHeading>
+            <div className="u-credits">
+              <Linha label="Quantidade de discos" valor={disco.quantidade_discos} />
+              <Linha label="RPM" valor={disco.rpm} />
+              <Linha label="Diâmetro" valor={disco.diametro_polegadas ? `${disco.diametro_polegadas}″` : null} />
+              <Linha label="Cor do vinil" valor={disco.cor_vinil} />
+              <Linha label="Ano da prensagem" valor={disco.ano_prensagem} />
+              <Linha label="País de origem" valor={disco.pais_origem} />
+            </div>
             {flags.length > 0 && (
-              <div className="flex flex-col gap-0.5 col-span-2 sm:col-span-3">
-                <span className="text-xs text-muted">Características</span>
-                <div className="flex flex-wrap gap-3">
-                  {flags.map((f) => (
-                    <span key={f} className="flex items-center gap-1 text-sm">
-                      <Check className="w-3.5 h-3.5 text-accent" /> {f}
-                    </span>
-                  ))}
-                </div>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {flags.map((f) => (
+                  <span key={f} className="border border-border-strong px-2 py-0.5 text-xs text-muted">
+                    {f}
+                  </span>
+                ))}
               </div>
             )}
-          </Secao>
+          </section>
         )}
 
         {temEstadoAvaliacao && (
-          <Secao titulo="Estado e avaliação">
-            <Item label="Estado do vinil" value={disco.estado_vinil} />
-            <Item label="Estado da capa" value={disco.estado_capa} />
-            {disco.resenha && (
-              <div className="flex flex-col gap-0.5 col-span-2 sm:col-span-3">
-                <span className="text-xs text-muted">Resenha</span>
-                <span className="text-sm whitespace-pre-wrap">{disco.resenha}</span>
-              </div>
-            )}
-          </Secao>
+          <section className="flex flex-col gap-3">
+            <SectionHeading>Estado e avaliação</SectionHeading>
+            <div className="u-credits">
+              <Linha label="Estado do vinil" valor={disco.estado_vinil} />
+              <Linha label="Estado da capa" valor={disco.estado_capa} />
+            </div>
+            {disco.resenha && <p className="whitespace-pre-wrap text-sm leading-relaxed">{disco.resenha}</p>}
+          </section>
         )}
 
         {temAquisicao && (
-          <Secao titulo="Aquisição">
-            <Item label="Gravadora" value={disco.gravadora_nome} />
-            <Item label="Número de catálogo" value={disco.numero_catalogo} />
-            <Item label="Loja" value={disco.loja_nome} />
-            <Item label="Data da compra" value={formatarData(disco.data_compra)} />
-            <Item label="Valor pago" value={formatarValor(disco.valor_pago)} />
-            <Item label="Valor estimado" value={formatarValor(disco.valor_estimado)} />
-            <Item label="Código de barras" value={disco.codigo_barras} />
-            <Item label="Número de série" value={disco.numero_serie} />
-          </Secao>
+          <section className="flex flex-col gap-3">
+            <SectionHeading>Aquisição</SectionHeading>
+            <div className="u-credits">
+              <Linha label="Gravadora" valor={disco.gravadora_nome} />
+              <Linha label="Número de catálogo" valor={disco.numero_catalogo} ident />
+              <Linha label="Loja" valor={disco.loja_nome} />
+              <Linha label="Data da compra" valor={formatarData(disco.data_compra)} />
+              <Linha label="Valor pago" valor={formatarValor(disco.valor_pago)} />
+              <Linha label="Valor estimado" valor={formatarValor(disco.valor_estimado)} />
+              <Linha label="Código de barras" valor={disco.codigo_barras} ident />
+              <Linha label="Número de série" valor={disco.numero_serie} ident />
+            </div>
+          </section>
         )}
 
         {disco.observacoes && (
-          <section className="flex flex-col gap-2">
-            <h2 className="text-sm font-semibold text-accent uppercase tracking-wide">Observações</h2>
-            <p className="text-sm whitespace-pre-wrap">{disco.observacoes}</p>
+          <section className="flex flex-col gap-3">
+            <SectionHeading>Observações</SectionHeading>
+            <p className="whitespace-pre-wrap text-sm leading-relaxed">{disco.observacoes}</p>
           </section>
         )}
 
         {disco.musicos_ficha_tecnica && disco.musicos_ficha_tecnica.length > 0 && (
           <section className="flex flex-col gap-3">
-            <h2 className="text-sm font-semibold text-accent uppercase tracking-wide">Ficha técnica</h2>
-            <div className="border border-border rounded-lg divide-y divide-border overflow-hidden bg-surface">
+            <SectionHeading>Ficha técnica</SectionHeading>
+            <div className="u-credits">
               {disco.musicos_ficha_tecnica.map((m) => (
-                <div key={m.id_disco_musico} className="px-3 py-2.5 text-sm">
-                  <p>
-                    <span className="font-medium">{m.musico_nome || 'Músico desconhecido'}</span>
-                    {m.instrumento_nome && <span className="text-muted"> — {m.instrumento_nome}</span>}
-                  </p>
+                <div key={m.id_disco_musico} className="u-credit flex-wrap">
+                  <span className="k text-foreground">{m.musico_nome || 'Músico desconhecido'}</span>
+                  <span className="fill" />
+                  <span className="v">{m.instrumento_nome || '—'}</span>
                   {(m.faixas || m.observacoes_musico) && (
-                    <p className="text-xs text-muted mt-0.5">
-                      {[m.faixas && `Faixas: ${m.faixas}`, m.observacoes_musico].filter(Boolean).join(' • ')}
+                    <p className="mt-0.5 w-full text-xs text-muted">
+                      {[m.faixas && `Faixas: ${m.faixas}`, m.observacoes_musico].filter(Boolean).join('  ·  ')}
                     </p>
                   )}
                 </div>

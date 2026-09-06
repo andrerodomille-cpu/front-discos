@@ -1,128 +1,112 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { Settings, Disc3, Library, Heart, Headphones, LayoutDashboard, MoreHorizontal } from 'lucide-react'
-import { ENTIDADES } from '../api/entidades'
 
-const ABAS_MOBILE = [
-  { to: '/', label: 'Coleção', icon: Library, ativo: (path) => path === '/' || path.startsWith('/discos') },
-  { to: '/wishlist', label: 'Wishlist', icon: Heart, ativo: (path) => path.startsWith('/wishlist') },
-  { to: '/audicoes', label: 'Audições', icon: Headphones, ativo: (path) => path.startsWith('/audicoes') },
-  { to: '/dashboards', label: 'Dashboards', icon: LayoutDashboard, ativo: (path) => path.startsWith('/dashboards') },
+const ABAS = [
+  { to: '/', label: 'Coleção', icon: Library, ativo: (p) => p === '/' || p.startsWith('/discos') },
+  { to: '/wishlist', label: 'Wishlist', icon: Heart, ativo: (p) => p.startsWith('/wishlist') },
+  { to: '/audicoes', label: 'Audições', icon: Headphones, ativo: (p) => p.startsWith('/audicoes') },
+  { to: '/dashboards', label: 'Dashboards', icon: LayoutDashboard, ativo: (p) => p.startsWith('/dashboards') },
   {
     to: '/mais',
     label: 'Mais',
     icon: MoreHorizontal,
-    ativo: (path) => path === '/mais' || path.startsWith('/cadastros') || path === '/configuracoes',
+    ativo: (p) => p === '/mais' || p.startsWith('/cadastros') || p === '/configuracoes',
   },
 ]
 
 export default function Layout() {
-  const location = useLocation()
+  const { pathname } = useLocation()
+  const configAtivo = pathname === '/configuracoes'
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-20 bg-surface/90 backdrop-blur border-b border-border">
-        <div className="flex items-center justify-between px-4 py-3 max-w-5xl mx-auto">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-lg">
-            <Disc3 className="w-6 h-6 text-accent" />
-            Coleção de Discos
-          </Link>
-          <Link
-            to="/configuracoes"
-            className="p-2 rounded-full hover:bg-surface-2 text-muted"
-            aria-label="Configurações"
-          >
-            <Settings className="w-5 h-5" />
-          </Link>
-        </div>
-        <nav className="hidden sm:flex gap-2 overflow-x-auto px-4 pb-3 max-w-5xl mx-auto no-scrollbar">
-          <Link
-            to="/"
-            title="Coleção"
-            aria-label="Coleção"
-            className={`shrink-0 p-2 rounded-full border transition-colors ${
-              location.pathname === '/'
-                ? 'bg-accent text-accent-contrast border-accent'
-                : 'border-border-strong text-muted hover:border-accent hover:text-accent'
-            }`}
-          >
-            <Library className="w-4 h-4" />
-          </Link>
-          <Link
-            to="/wishlist"
-            title="Wishlist"
-            aria-label="Wishlist"
-            className={`shrink-0 p-2 rounded-full border transition-colors ${
-              location.pathname.startsWith('/wishlist')
-                ? 'bg-accent text-accent-contrast border-accent'
-                : 'border-border-strong text-muted hover:border-accent hover:text-accent'
-            }`}
-          >
-            <Heart className="w-4 h-4" />
-          </Link>
-          <Link
-            to="/audicoes"
-            title="Audições"
-            aria-label="Audições"
-            className={`shrink-0 p-2 rounded-full border transition-colors ${
-              location.pathname.startsWith('/audicoes')
-                ? 'bg-accent text-accent-contrast border-accent'
-                : 'border-border-strong text-muted hover:border-accent hover:text-accent'
-            }`}
-          >
-            <Headphones className="w-4 h-4" />
-          </Link>
-          <Link
-            to="/dashboards"
-            title="Dashboards"
-            aria-label="Dashboards"
-            className={`shrink-0 p-2 rounded-full border transition-colors ${
-              location.pathname.startsWith('/dashboards')
-                ? 'bg-accent text-accent-contrast border-accent'
-                : 'border-border-strong text-muted hover:border-accent hover:text-accent'
-            }`}
-          >
-            <LayoutDashboard className="w-4 h-4" />
-          </Link>
-          {Object.entries(ENTIDADES).map(([key, cfg]) => {
-            const to = `/cadastros/${key}`
-            const ativo = location.pathname === to
-            const Icon = cfg.icon
-            return (
-              <Link
-                key={key}
-                to={to}
-                title={cfg.label}
-                aria-label={cfg.label}
-                className={`shrink-0 p-2 rounded-full border transition-colors ${
-                  ativo
-                    ? 'bg-accent text-accent-contrast border-accent'
-                    : 'border-border-strong text-muted hover:border-accent hover:text-accent'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-              </Link>
-            )
-          })}
-        </nav>
-      </header>
+      {/* Desktop rail — the spine */}
+      <aside className="hidden lg:flex fixed inset-y-0 left-0 w-16 z-30 flex-col items-center border-r border-border bg-surface">
+        <Link
+          to="/"
+          aria-label="Coleção de Discos"
+          className="flex h-16 w-full items-center justify-center text-accent"
+        >
+          <Disc3 className="h-6 w-6" />
+        </Link>
 
-      <main className="max-w-5xl mx-auto px-4 pt-6 pb-20 sm:pb-6">
-        <Outlet />
-      </main>
-
-      <nav className="sm:hidden fixed bottom-0 inset-x-0 z-20 bg-surface/95 backdrop-blur border-t border-border pb-[env(safe-area-inset-bottom)]">
-        <div className="flex items-stretch justify-around">
-          {ABAS_MOBILE.map(({ to, label, icon: Icon, ativo }) => {
-            const ativa = ativo(location.pathname)
+        <nav className="flex flex-1 flex-col items-center gap-1 py-2">
+          {ABAS.map(({ to, label, icon: Icon, ativo }) => {
+            const ativa = ativo(pathname)
             return (
               <Link
                 key={to}
                 to={to}
-                className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 text-[11px] ${
+                title={label}
+                aria-label={label}
+                data-active={ativa}
+                className={`relative flex h-11 w-11 items-center justify-center rounded-[3px] transition-colors ${
+                  ativa ? 'text-accent' : 'text-faint hover:text-foreground'
+                }`}
+              >
+                {ativa && <span className="absolute left-[-10px] top-2 bottom-2 w-[3px] bg-accent" />}
+                <Icon className="h-5 w-5" />
+              </Link>
+            )
+          })}
+        </nav>
+
+        <span
+          className="u-condensed my-4 select-none text-[10px] uppercase tracking-[0.22em] text-faint"
+          style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+        >
+          Coleção de Discos
+        </span>
+
+        <Link
+          to="/configuracoes"
+          aria-label="Configurações"
+          className={`mb-4 flex h-11 w-11 items-center justify-center rounded-[3px] transition-colors ${
+            configAtivo ? 'text-accent' : 'text-faint hover:text-foreground'
+          }`}
+        >
+          <Settings className="h-5 w-5" />
+        </Link>
+      </aside>
+
+      {/* Mobile / tablet header */}
+      <header className="lg:hidden sticky top-0 z-20 border-b border-border bg-surface/90 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
+          <Link to="/" className="flex items-center gap-2">
+            <Disc3 className="h-5 w-5 text-accent" />
+            <span className="u-condensed text-[15px] uppercase tracking-[0.14em]">Coleção de Discos</span>
+          </Link>
+          <Link
+            to="/configuracoes"
+            className="-mr-2 p-2 text-muted hover:text-foreground"
+            aria-label="Configurações"
+          >
+            <Settings className="h-5 w-5" />
+          </Link>
+        </div>
+      </header>
+
+      <main className="lg:pl-16">
+        <div className="mx-auto max-w-5xl px-4 pb-24 pt-6 sm:px-6 lg:pb-12">
+          <Outlet />
+        </div>
+      </main>
+
+      {/* Mobile / tablet bottom nav */}
+      <nav className="lg:hidden fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
+        <div className="flex items-stretch justify-around">
+          {ABAS.map(({ to, label, icon: Icon, ativo }) => {
+            const ativa = ativo(pathname)
+            return (
+              <Link
+                key={to}
+                to={to}
+                className={`relative flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] ${
                   ativa ? 'text-accent' : 'text-faint'
                 }`}
               >
-                <Icon className="w-5 h-5" />
+                {ativa && <span className="absolute inset-x-5 top-0 h-[2px] bg-accent" />}
+                <Icon className="h-5 w-5" />
                 {label}
               </Link>
             )

@@ -1,7 +1,6 @@
 import { Plus, Trash2 } from 'lucide-react'
 
-const inputClass =
-  'bg-surface border border-border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent'
+const inputClass = 'u-field'
 
 export default function FichaTecnica({ linhas, musicos, instrumentos, onChange }) {
   const atualizarLinha = (index, campo, valor) => {
@@ -21,7 +20,7 @@ export default function FichaTecnica({ linhas, musicos, instrumentos, onChange }
     <div className="flex flex-col gap-3">
       {linhas.length === 0 && <p className="text-sm text-faint">Nenhum músico adicionado à ficha técnica.</p>}
       {linhas.map((linha, index) => (
-        <div key={index} className="grid grid-cols-1 sm:grid-cols-[1.2fr_1.2fr_0.8fr_1.2fr_auto] gap-2 items-start bg-surface/60 border border-border rounded-lg p-2">
+        <div key={index} className="grid grid-cols-1 items-start gap-2 border-l-2 border-border-strong pl-3 sm:grid-cols-[1.2fr_1.2fr_0.8fr_1.2fr_auto]">
           <select
             value={linha.id_musico}
             onChange={(e) => atualizarLinha(index, 'id_musico', e.target.value)}

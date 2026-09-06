@@ -4,8 +4,7 @@ import { Loader2, Trash2, ArrowLeft } from 'lucide-react'
 import api from '../api/client'
 import ComboBox from '../components/ComboBox'
 
-const inputClass =
-  'bg-surface border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent'
+const inputClass = 'u-field'
 const labelClass = 'flex flex-col gap-1 text-sm'
 const spanClass = 'text-muted'
 
@@ -146,9 +145,9 @@ export default function AudicaoForm() {
         )}
       </div>
 
-      <h1 className="text-xl font-semibold mb-6">{editando ? 'Editar audição' : 'Registrar audição'}</h1>
+      <h1 className="mb-6 text-2xl">{editando ? 'Editar audição' : 'Registrar audição'}</h1>
 
-      {erro && <p className="text-red-500 text-sm mb-4">{erro}</p>}
+      {erro && <p className="mb-4 text-sm text-red-500">{erro}</p>}
 
       <form onSubmit={salvar} className="flex flex-col gap-4">
         <Field label="Disco *">
@@ -172,16 +171,12 @@ export default function AudicaoForm() {
           <textarea value={form.observacoes} onChange={set('observacoes')} rows={3} className={inputClass} />
         </Field>
 
-        <div className="flex gap-3 pt-2 pb-8">
-          <button
-            type="submit"
-            disabled={salvando}
-            className="flex items-center gap-2 bg-accent hover:bg-accent-hover disabled:opacity-50 text-accent-contrast font-medium px-5 py-2.5 rounded-lg"
-          >
-            {salvando && <Loader2 className="w-4 h-4 animate-spin" />}
+        <div className="flex gap-3 pb-8 pt-2">
+          <button type="submit" disabled={salvando} className="u-btn u-btn-primary px-5 py-2.5">
+            {salvando && <Loader2 className="h-4 w-4 animate-spin" />}
             {editando ? 'Salvar alterações' : 'Registrar'}
           </button>
-          <Link to="/audicoes" className="flex items-center px-5 py-2.5 rounded-lg border border-border-strong text-sm hover:border-faint">
+          <Link to="/audicoes" className="u-btn u-btn-ghost px-5 py-2.5">
             Cancelar
           </Link>
         </div>

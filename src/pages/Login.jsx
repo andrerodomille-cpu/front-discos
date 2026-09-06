@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { Disc3, Mail, Lock, Eye, EyeOff, Loader2, LogIn } from 'lucide-react'
+import { Disc3, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
@@ -35,27 +35,43 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4 relative overflow-hidden">
-      <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 rounded-full bg-accent/25 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 rounded-full bg-accent/20 blur-3xl" />
-
-      <div className="relative w-full max-w-sm">
-        <div className="flex flex-col items-center gap-2 mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-accent flex items-center justify-center shadow-lg shadow-accent/30">
-            <Disc3 className="w-8 h-8 text-accent-contrast" />
-          </div>
-          <h1 className="text-lg font-semibold mt-2">Coleção de Discos</h1>
-          <p className="text-sm text-muted">Entre para acessar sua coleção</p>
+    <div className="min-h-screen bg-background text-foreground lg:grid lg:grid-cols-[1.1fr_1fr]">
+      <div className="relative flex min-h-[36vh] flex-col overflow-hidden bg-accent p-7 text-accent-contrast sm:p-10 lg:min-h-screen lg:p-14">
+        <div className="flex items-center gap-2">
+          <Disc3 className="h-5 w-5" />
+          <span className="u-condensed text-sm opacity-80">Catálogo pessoal</span>
         </div>
 
-        <form
-          onSubmit={entrar}
-          className="bg-surface border border-border rounded-2xl p-6 flex flex-col gap-4 shadow-xl shadow-black/5"
-        >
+        <div className="mt-auto flex flex-col gap-5 pt-16">
+          <h1 className="font-display text-[clamp(2.6rem,8vw,4.75rem)] font-extrabold leading-[0.92] tracking-[-0.03em]">
+            Coleção
+            <br />
+            de Discos
+          </h1>
+          <p className="u-ident opacity-75">LP · 33⅓ RPM · edição pessoal</p>
+        </div>
+
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-44 -right-44 h-96 w-96 rounded-full"
+          style={{
+            background:
+              'repeating-radial-gradient(circle, transparent 0 11px, rgba(0,0,0,0.07) 11px 12px)',
+          }}
+        />
+      </div>
+
+      <div className="flex items-center justify-center p-6 sm:p-10">
+        <form onSubmit={entrar} className="flex w-full max-w-sm flex-col gap-5">
+          <div>
+            <h2 className="text-2xl">Entrar</h2>
+            <p className="mt-1 text-sm text-muted">Acesse sua coleção.</p>
+          </div>
+
           <label className="flex flex-col gap-1.5 text-sm">
             <span className="text-muted">E-mail</span>
             <div className="relative">
-              <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+              <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
               <input
                 type="email"
                 value={email}
@@ -64,7 +80,7 @@ export default function Login() {
                 autoFocus
                 autoComplete="email"
                 placeholder="voce@email.com"
-                className="w-full bg-background border border-border rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                className="u-field pl-9"
               />
             </div>
           </label>
@@ -72,7 +88,7 @@ export default function Login() {
           <label className="flex flex-col gap-1.5 text-sm">
             <span className="text-muted">Senha</span>
             <div className="relative">
-              <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+              <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
               <input
                 type={mostrarSenha ? 'text' : 'password'}
                 value={senha}
@@ -80,29 +96,25 @@ export default function Login() {
                 required
                 autoComplete="current-password"
                 placeholder="••••••••"
-                className="w-full bg-background border border-border rounded-lg pl-9 pr-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                className="u-field pl-9 pr-10"
               />
               <button
                 type="button"
                 onClick={() => setMostrarSenha((v) => !v)}
                 tabIndex={-1}
                 aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-faint hover:text-muted"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-faint hover:text-foreground"
               >
-                {mostrarSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
           </label>
 
-          {erro && <p className="text-red-500 text-sm">{erro}</p>}
+          {erro && <p className="text-sm text-red-500">{erro}</p>}
 
-          <button
-            type="submit"
-            disabled={entrando}
-            className="flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover disabled:opacity-50 text-accent-contrast font-medium py-2.5 rounded-lg mt-1"
-          >
-            {entrando ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
-            {entrando ? 'Entrando...' : 'Entrar'}
+          <button type="submit" disabled={entrando} className="u-btn u-btn-primary mt-1 w-full py-2.5">
+            {entrando && <Loader2 className="h-4 w-4 animate-spin" />}
+            {entrando ? 'Entrando…' : 'Entrar'}
           </button>
         </form>
       </div>

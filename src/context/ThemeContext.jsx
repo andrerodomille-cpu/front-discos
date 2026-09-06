@@ -1,14 +1,14 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
 export const ACCENTS = [
-  { key: 'emerald', label: 'Esmeralda', color: '#10b981' },
-  { key: 'blue', label: 'Azul', color: '#3b82f6' },
-  { key: 'violet', label: 'Violeta', color: '#8b5cf6' },
-  { key: 'rose', label: 'Rosa', color: '#f43f5e' },
-  { key: 'amber', label: 'Âmbar', color: '#f59e0b' },
-  { key: 'cyan', label: 'Ciano', color: '#06b6d4' },
-  { key: 'orange', label: 'Laranja', color: '#f97316' },
-  { key: 'pink', label: 'Pink', color: '#ec4899' },
+  { key: 'emerald', label: 'Esmeralda', color: '#0f8a5d' },
+  { key: 'blue', label: 'Azul', color: '#2f5bd6' },
+  { key: 'violet', label: 'Violeta', color: '#6b46e0' },
+  { key: 'rose', label: 'Rosa', color: '#d63a67' },
+  { key: 'amber', label: 'Âmbar', color: '#b1771a' },
+  { key: 'cyan', label: 'Ciano', color: '#0e8ba6' },
+  { key: 'orange', label: 'Laranja', color: '#c6552a' },
+  { key: 'pink', label: 'Pink', color: '#c43e86' },
 ]
 
 const ThemeContext = createContext(null)
@@ -31,7 +31,7 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     document.documentElement.classList.toggle('dark', tema === 'dark')
     localStorage.setItem('tema', tema)
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', tema === 'dark' ? '#0a0a0a' : '#fafafa')
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', tema === 'dark' ? '#15120d' : '#ebe8df')
   }, [tema])
 
   useEffect(() => {

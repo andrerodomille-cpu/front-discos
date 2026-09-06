@@ -107,23 +107,23 @@ export default function DashboardFinanceiro() {
   const topValiosos = useMemo(() => topDiscosValiosos(discos), [discos])
 
   return (
-    <div className="pb-16 sm:pb-14 flex flex-col gap-6">
+    <div className="flex flex-col gap-8 pb-16">
       <div>
-        <h1 className="text-xl font-semibold mb-4">Dashboards</h1>
+        <h1 className="mb-4 text-2xl">Dashboards</h1>
         <DashboardTabs />
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-20 text-faint gap-2">
-          <Loader2 className="w-5 h-5 animate-spin" /> Carregando dashboards...
+        <div className="flex items-center justify-center gap-2 py-20 text-faint">
+          <Loader2 className="h-5 w-5 animate-spin" /> Carregando dashboards…
         </div>
       ) : erro ? (
-        <p className="text-center py-20 text-red-500 text-sm">Erro ao carregar dados: {erro}</p>
+        <p className="py-20 text-center text-sm text-red-500">Erro ao carregar dados: {erro}</p>
       ) : discos.length === 0 ? (
-        <div className="text-center py-20 text-faint">Cadastre discos para ver o dashboard financeiro.</div>
+        <div className="py-20 text-center text-faint">Cadastre discos para ver o dashboard financeiro.</div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+          <div className="grid grid-cols-2 gap-x-5 gap-y-5 sm:grid-cols-3">
             <DashboardTile icon={Wallet} label="Valor pago pela coleção" value={formatarValor(estatisticas.valorPagoTotal)} />
             <DashboardTile icon={TrendingUp} label="Valor estimado atual" value={formatarValor(estatisticas.valorEstimadoTotal)} />
             <DashboardTile
@@ -159,33 +159,33 @@ export default function DashboardFinanceiro() {
             />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-8 lg:grid-cols-2">
             <GraficoColunas titulo="Valor investido por ano (R$)" dados={porAno} />
             <GraficoBarraHorizontal titulo="Compras por loja" dados={porLoja} />
             <GraficoBarraHorizontal titulo="Distribuição por formato" dados={porFormato} sufixo="%" />
           </div>
 
-          <section className="flex flex-col gap-3">
-            <h2 className="text-sm font-semibold text-muted">Top {topValiosos.length} discos mais valiosos</h2>
-            <div className="border border-border rounded-xl overflow-x-auto bg-surface">
+          <section className="flex flex-col gap-3 border-t-2 border-border-strong pt-3">
+            <h2 className="u-sec">Top {topValiosos.length} discos mais valiosos</h2>
+            <div className="overflow-x-auto border-b border-border">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs text-muted border-b border-border">
-                    <th className="px-3 py-2 font-medium">Álbum</th>
-                    <th className="px-3 py-2 font-medium text-right">Pago</th>
-                    <th className="px-3 py-2 font-medium text-right">Estimado</th>
+                  <tr className="border-b border-border-strong text-left text-xs text-muted">
+                    <th className="py-2 pr-3 font-medium">Álbum</th>
+                    <th className="px-3 py-2 text-right font-medium">Pago</th>
+                    <th className="py-2 pl-3 text-right font-medium">Estimado</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {topValiosos.map((d) => (
-                    <tr key={d.id_disco} className="hover:bg-surface-2 transition-colors">
-                      <td className="px-3 py-2 max-w-[16rem] truncate">
+                    <tr key={d.id_disco} className="transition-colors hover:bg-surface-2">
+                      <td className="max-w-[16rem] truncate py-2 pr-3">
                         <Link to={`/discos/${d.id_disco}`} className="hover:text-accent">
                           {d.titulo}
                         </Link>
                       </td>
-                      <td className="px-3 py-2 text-right text-muted tabular-nums">{formatarValor(d.valor_pago)}</td>
-                      <td className="px-3 py-2 text-right font-medium tabular-nums">{formatarValor(d.valor_estimado)}</td>
+                      <td className="u-ident px-3 py-2 text-right text-faint">{formatarValor(d.valor_pago)}</td>
+                      <td className="u-ident py-2 pl-3 text-right">{formatarValor(d.valor_estimado)}</td>
                     </tr>
                   ))}
                 </tbody>

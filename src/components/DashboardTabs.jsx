@@ -10,26 +10,28 @@ const ABAS = [
 ]
 
 export default function DashboardTabs() {
-  const location = useLocation()
+  const { pathname } = useLocation()
 
   return (
-    <div className="flex flex-wrap gap-2 mb-6">
-      {ABAS.map((aba) => {
-        const ativa = location.pathname === aba.to
-        return (
-          <Link
-            key={aba.to}
-            to={aba.to}
-            className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-              ativa
-                ? 'bg-accent text-accent-contrast border-accent'
-                : 'border-border-strong text-muted hover:border-accent hover:text-accent'
-            }`}
-          >
-            {aba.label}
-          </Link>
-        )
-      })}
+    <div className="-mx-4 mb-6 overflow-x-auto border-b border-border px-4 no-scrollbar sm:mx-0 sm:px-0">
+      <div className="flex min-w-max gap-5">
+        {ABAS.map((aba) => {
+          const ativa = pathname === aba.to
+          return (
+            <Link
+              key={aba.to}
+              to={aba.to}
+              className={`-mb-px border-b-2 pb-2 pt-1 text-sm transition-colors ${
+                ativa
+                  ? 'border-accent font-semibold text-foreground'
+                  : 'border-transparent text-muted hover:text-foreground'
+              }`}
+            >
+              {aba.label}
+            </Link>
+          )
+        })}
+      </div>
     </div>
   )
 }

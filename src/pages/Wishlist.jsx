@@ -62,48 +62,49 @@ export default function Wishlist() {
   }
 
   return (
-    <div className="pb-16 sm:pb-14">
-      <div className="mb-6">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
-          <input
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            placeholder="Buscar por título, artista, gênero, formato..."
-            className="w-full bg-surface border border-border rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
-          />
-        </div>
+    <div className="pb-16">
+      <h1 className="mb-1 text-2xl">Wishlist</h1>
+      <p className="mb-5 text-sm text-muted">Discos que você ainda quer.</p>
+
+      <div className="relative mb-6">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
+        <input
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          placeholder="Buscar por título, artista, gênero, formato…"
+          className="u-field pl-9"
+        />
       </div>
 
       <Link
         to="/wishlist/novo"
         title="Novo item na wishlist"
         aria-label="Novo item na wishlist"
-        className="fixed z-30 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-6 flex items-center justify-center bg-accent hover:bg-accent-hover text-accent-contrast p-4 rounded-full shadow-lg shadow-black/30"
+        className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-5 z-30 flex items-center justify-center rounded-full bg-accent p-4 text-accent-contrast shadow-[0_6px_20px_-4px_rgba(0,0,0,0.4)] transition-colors hover:bg-accent-hover lg:bottom-8"
       >
-        <Plus className="w-6 h-6" />
+        <Plus className="h-6 w-6" />
       </Link>
 
       {loading && (
-        <div className="flex items-center justify-center py-20 text-faint gap-2">
-          <Loader2 className="w-5 h-5 animate-spin" /> Carregando wishlist...
+        <div className="flex items-center justify-center gap-2 py-20 text-faint">
+          <Loader2 className="h-5 w-5 animate-spin" /> Carregando wishlist…
         </div>
       )}
 
-      {erro && !loading && <p className="text-center py-20 text-red-500 text-sm">Erro: {erro}</p>}
+      {erro && !loading && <p className="py-20 text-center text-sm text-red-500">Erro: {erro}</p>}
 
       {!loading && !erro && itensFiltrados.length === 0 && (
-        <div className="text-center py-20 text-faint">
+        <div className="py-20 text-center text-faint">
           {itens.length === 0 ? 'Nenhum item na wishlist ainda.' : 'Nenhum item encontrado para essa busca.'}
         </div>
       )}
 
       {!loading && !erro && itensFiltrados.length > 0 && (
         <>
-          <p className="text-sm text-faint mb-3">
+          <p className="mb-3 text-xs tabular-nums text-faint">
             {itensFiltrados.length} {itensFiltrados.length === 1 ? 'item' : 'itens'}
           </p>
-          <div className="border border-border rounded-lg divide-y divide-border overflow-hidden bg-surface">
+          <div className="divide-y divide-border border-y border-border">
             {itensFiltrados.map((item) => (
               <WishlistItem key={item.id_wishlist} item={item} onToggleAdquirido={toggleAdquirido} onRemover={remover} />
             ))}

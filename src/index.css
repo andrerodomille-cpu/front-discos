@@ -1,59 +1,50 @@
 @import "tailwindcss";
 
+/* ============================================================
+   "Pressing" — modernist record-sleeve system
+   Neutrals: warm paper (light) / warm wax (dark). Accent = single ink.
+   ============================================================ */
+
 :root {
-  --app-background: #fafafa;
-  --app-surface: #ffffff;
-  --app-surface-2: #f0f0f1;
-  --app-border: #e4e4e7;
-  --app-border-strong: #d4d4d8;
-  --app-foreground: #18181b;
-  --app-muted: #52525b;
-  --app-faint: #8b8b93;
+  color-scheme: light;
+
+  --app-background: #ebe8df;
+  --app-surface: #fcfbf9;
+  --app-surface-2: #e4e0d4;
+  --app-border: #dcd7c9;
+  --app-border-strong: #c3bca7;
+  --app-foreground: #1c180f;
+  --app-muted: #6a6350;
+  --app-faint: #948b74;
+
+  --app-accent: #0f8a5d;
+  --app-accent-hover: #16a874;
+  --app-accent-contrast: #fbfaf7;
 }
 
 .dark {
-  --app-background: #0a0a0a;
-  --app-surface: #171717;
-  --app-surface-2: #262626;
-  --app-border: #262626;
-  --app-border-strong: #404040;
-  --app-foreground: #f5f5f5;
-  --app-muted: #a3a3a3;
-  --app-faint: #737373;
+  color-scheme: dark;
+
+  --app-background: #15120d;
+  --app-surface: #1d1913;
+  --app-surface-2: #2a241b;
+  --app-border: #322b20;
+  --app-border-strong: #483f2e;
+  --app-foreground: #f3eee1;
+  --app-muted: #a79b82;
+  --app-faint: #766b54;
 }
 
-[data-accent='emerald'] {
-  --app-accent: #10b981;
-  --app-accent-hover: #34d399;
-}
-[data-accent='blue'] {
-  --app-accent: #3b82f6;
-  --app-accent-hover: #60a5fa;
-}
-[data-accent='violet'] {
-  --app-accent: #8b5cf6;
-  --app-accent-hover: #a78bfa;
-}
-[data-accent='rose'] {
-  --app-accent: #f43f5e;
-  --app-accent-hover: #fb7185;
-}
-[data-accent='amber'] {
-  --app-accent: #f59e0b;
-  --app-accent-hover: #fbbf24;
-}
-[data-accent='cyan'] {
-  --app-accent: #06b6d4;
-  --app-accent-hover: #22d3ee;
-}
-[data-accent='orange'] {
-  --app-accent: #f97316;
-  --app-accent-hover: #fb923c;
-}
-[data-accent='pink'] {
-  --app-accent: #ec4899;
-  --app-accent-hover: #f472b6;
-}
+/* Accent = the single ink. Tuned to sit on warm paper and warm wax.
+   Text on an accent fill is --app-accent-contrast (light), except amber. */
+[data-accent='emerald'] { --app-accent: #0f8a5d; --app-accent-hover: #16a874; }
+[data-accent='blue']    { --app-accent: #2f5bd6; --app-accent-hover: #4f79ef; }
+[data-accent='violet']  { --app-accent: #6b46e0; --app-accent-hover: #8a68f2; }
+[data-accent='rose']    { --app-accent: #d63a67; --app-accent-hover: #ec5a83; }
+[data-accent='amber']   { --app-accent: #b1771a; --app-accent-hover: #d0921f; --app-accent-contrast: #1c180f; }
+[data-accent='cyan']    { --app-accent: #0e8ba6; --app-accent-hover: #16a6c4; }
+[data-accent='orange']  { --app-accent: #c6552a; --app-accent-hover: #e06f3f; }
+[data-accent='pink']    { --app-accent: #c43e86; --app-accent-hover: #dd5ca0; }
 
 @theme inline {
   --color-background: var(--app-background);
@@ -66,8 +57,14 @@
   --color-faint: var(--app-faint);
   --color-accent: var(--app-accent);
   --color-accent-hover: var(--app-accent-hover);
-  --color-accent-contrast: #0a0a0a;
+  --color-accent-contrast: var(--app-accent-contrast);
+
+  --font-display: 'Archivo', 'Public Sans', system-ui, sans-serif;
+  --font-sans: 'Public Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 }
+
+/* ============================ Base ============================ */
 
 html,
 body,
@@ -77,7 +74,119 @@ body,
 
 body {
   margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+::selection {
+  background: var(--app-accent);
+  color: var(--app-accent-contrast);
+}
+
+:where(a, button):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--color-accent);
+}
+
+/* ======================== Components ========================= */
+
+@layer components {
+  .u-field {
+    width: 100%;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 3px;
+    padding: 0.5rem 0.625rem;
+    font: inherit;
+    font-size: 0.9375rem;
+    color: var(--color-foreground);
+    transition: border-color 0.12s;
+  }
+  .u-field::placeholder {
+    color: var(--color-faint);
+  }
+  .u-field:focus,
+  .u-field:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+
+  .u-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.12s, border-color 0.12s, color 0.12s;
+  }
+  .u-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  .u-btn-primary {
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+  }
+  .u-btn-primary:not(:disabled):hover {
+    background: var(--color-accent-hover);
+  }
+  .u-btn-ghost {
+    border-color: var(--color-border-strong);
+    color: var(--color-foreground);
+  }
+  .u-btn-ghost:not(:disabled):hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  /* Section heading — hairline rule, no caps, no accent color */
+  .u-sec {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-stretch: 88%;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: var(--color-muted);
+  }
+  .u-sec::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+  }
+}
+
+/* ======================== Utilities ========================= */
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -98,4 +207,110 @@ body {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Condensed grotesque — spine labels, tight display type */
+.u-condensed {
+  font-family: var(--font-display);
+  font-stretch: 80%;
+  font-weight: 640;
+  letter-spacing: 0.005em;
+}
+
+/* Catalog / matrix / barcode identifiers — genuinely stamped alphanumerics */
+.u-ident {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Sleeve — album-cover presentation: sharp corners, one real shadow */
+.u-sleeve {
+  border-radius: 3px;
+  background: var(--color-surface-2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 10px 24px -14px rgba(0, 0, 0, 0.3);
+}
+.dark .u-sleeve {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 12px 30px -16px rgba(0, 0, 0, 0.65);
+}
+
+/* Liner-note credit row with dotted leader */
+.u-credits {
+  display: flex;
+  flex-direction: column;
+}
+.u-credit {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  font-size: 0.9375rem;
+  border-top: 1px solid var(--color-border);
+}
+.u-credit:first-child {
+  border-top: 0;
+}
+.u-credit > .k {
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.u-credit > .fill {
+  flex: 1 1 1.5rem;
+  min-width: 1.25rem;
+  align-self: center;
+  border-bottom: 1px dotted var(--color-border-strong);
+}
+.u-credit > .v {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Spine tick — accent edge revealed on hover/focus/active list rows */
+.u-spine {
+  position: relative;
+}
+.u-spine::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--color-accent);
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.u-spine:hover::before,
+.u-spine:focus-within::before,
+.u-spine[data-active="true"]::before {
+  opacity: 1;
+}
+
+/* One orchestrated page-load reveal — the shelf filling in */
+@keyframes u-sleeve-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.u-reveal > * {
+  animation: u-sleeve-in 0.34s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 22ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

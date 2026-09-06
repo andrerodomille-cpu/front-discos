@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Settings, ChevronRight, LogOut, UserCircle } from 'lucide-react'
 import { ENTIDADES } from '../api/entidades'
 import { useAuth } from '../context/AuthContext'
+import SectionHeading from '../components/SectionHeading'
 
 export default function Mais() {
   const { usuario, logout } = useAuth()
@@ -14,55 +15,56 @@ export default function Mais() {
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-xl font-semibold mb-4">Mais</h1>
+      <h1 className="mb-5 text-2xl">Mais</h1>
 
       {usuario && (
-        <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-3 py-3 mb-6">
-          <UserCircle className="w-8 h-8 text-faint shrink-0" />
+        <div className="mb-8 flex items-center gap-3 border-l-2 border-accent pl-3">
+          <UserCircle className="h-8 w-8 shrink-0 text-faint" />
           <div className="min-w-0">
-            <p className="text-sm font-medium truncate">{usuario.nome}</p>
-            <p className="text-xs text-muted truncate">{usuario.email}</p>
+            <p className="truncate font-display font-semibold tracking-[-0.01em]">{usuario.nome}</p>
+            <p className="truncate text-xs text-muted">{usuario.email}</p>
           </div>
         </div>
       )}
 
-      <p className="text-sm text-muted mb-2">Cadastros</p>
-      <div className="border border-border rounded-lg divide-y divide-border overflow-hidden bg-surface mb-6">
+      <SectionHeading className="mb-3">Cadastros</SectionHeading>
+      <div className="mb-8 divide-y divide-border border-y border-border">
         {Object.entries(ENTIDADES).map(([key, cfg]) => {
           const Icon = cfg.icon
           return (
             <Link
               key={key}
               to={`/cadastros/${key}`}
-              className="flex items-center gap-3 px-3 py-3 hover:bg-surface-2 transition-colors"
+              className="u-spine flex items-center gap-3 py-3 pl-4 pr-3 transition-colors hover:bg-surface-2"
             >
-              <Icon className="w-4 h-4 text-muted shrink-0" />
+              <Icon className="h-4 w-4 shrink-0 text-faint" />
               <span className="flex-1 text-sm">{cfg.label}</span>
-              <ChevronRight className="w-4 h-4 text-faint shrink-0" />
+              <ChevronRight className="h-4 w-4 shrink-0 text-faint" />
             </Link>
           )
         })}
       </div>
 
-      <p className="text-sm text-muted mb-2">Preferências</p>
-      <div className="border border-border rounded-lg divide-y divide-border overflow-hidden bg-surface mb-6">
-        <Link to="/configuracoes" className="flex items-center gap-3 px-3 py-3 hover:bg-surface-2 transition-colors">
-          <Settings className="w-4 h-4 text-muted shrink-0" />
+      <SectionHeading className="mb-3">Preferências</SectionHeading>
+      <div className="mb-8 divide-y divide-border border-y border-border">
+        <Link
+          to="/configuracoes"
+          className="u-spine flex items-center gap-3 py-3 pl-4 pr-3 transition-colors hover:bg-surface-2"
+        >
+          <Settings className="h-4 w-4 shrink-0 text-faint" />
           <span className="flex-1 text-sm">Configurações</span>
-          <ChevronRight className="w-4 h-4 text-faint shrink-0" />
+          <ChevronRight className="h-4 w-4 shrink-0 text-faint" />
         </Link>
       </div>
 
-      <div className="border border-border rounded-lg overflow-hidden bg-surface">
-        <button
-          type="button"
-          onClick={sair}
-          className="w-full flex items-center gap-3 px-3 py-3 text-red-500 hover:bg-surface-2 transition-colors"
-        >
-          <LogOut className="w-4 h-4 shrink-0" />
-          <span className="flex-1 text-sm text-left">Sair</span>
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={sair}
+        className="flex w-full items-center gap-3 border-y border-border py-3 pl-4 pr-3 text-left text-red-500 transition-colors hover:bg-surface-2"
+      >
+        <LogOut className="h-4 w-4 shrink-0" />
+        <span className="flex-1 text-sm">Sair</span>
+      </button>
     </div>
   )
 }

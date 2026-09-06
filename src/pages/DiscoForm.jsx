@@ -4,6 +4,7 @@ import { Loader2, Trash2, ArrowLeft, Disc3 } from 'lucide-react'
 import api from '../api/client'
 import { GRAUS_CONSERVACAO } from '../api/entidades'
 import FichaTecnica from '../components/FichaTecnica'
+import SectionHeading from '../components/SectionHeading'
 
 const ESTADO_INICIAL = {
   titulo: '',
@@ -38,8 +39,7 @@ const ESTADO_INICIAL = {
   observacoes: '',
 }
 
-const inputClass =
-  'bg-surface border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent'
+const inputClass = 'u-field'
 const labelClass = 'flex flex-col gap-1 text-sm'
 const spanClass = 'text-muted'
 
@@ -61,8 +61,8 @@ function Field({ label, children, className = '' }) {
 function Secao({ titulo, children }) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold text-accent uppercase tracking-wide">{titulo}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">{children}</div>
+      <SectionHeading>{titulo}</SectionHeading>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">{children}</div>
     </section>
   )
 }
@@ -251,13 +251,13 @@ export default function DiscoForm() {
         )}
       </div>
 
-      <h1 className="text-xl font-semibold mb-6">{editando ? 'Editar disco' : 'Novo disco'}</h1>
+      <h1 className="mb-6 text-2xl">{editando ? 'Editar disco' : 'Novo disco'}</h1>
 
-      {erro && <p className="text-red-500 text-sm mb-4">{erro}</p>}
+      {erro && <p className="mb-4 text-sm text-red-500">{erro}</p>}
 
-      <form onSubmit={salvar} className="flex flex-col gap-8">
+      <form onSubmit={salvar} className="flex flex-col gap-9">
         <div className="flex justify-center sm:justify-start">
-          <div className="w-64 h-64 rounded-xl bg-surface-2 border border-border flex items-center justify-center overflow-hidden shrink-0">
+          <div className="u-sleeve flex h-60 w-60 shrink-0 items-center justify-center overflow-hidden">
             {form.url_capa ? (
               <img
                 key={form.url_capa}
@@ -419,7 +419,7 @@ export default function DiscoForm() {
         </Secao>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-accent uppercase tracking-wide">Ficha técnica (músicos)</h2>
+          <SectionHeading>Ficha técnica (músicos)</SectionHeading>
           <FichaTecnica
             linhas={fichaTecnica}
             musicos={listas.musicos}
@@ -428,16 +428,12 @@ export default function DiscoForm() {
           />
         </section>
 
-        <div className="flex gap-3 pt-2 pb-8">
-          <button
-            type="submit"
-            disabled={salvando}
-            className="flex items-center gap-2 bg-accent hover:bg-accent-hover disabled:opacity-50 text-accent-contrast font-medium px-5 py-2.5 rounded-lg"
-          >
-            {salvando && <Loader2 className="w-4 h-4 animate-spin" />}
+        <div className="flex gap-3 pb-8 pt-2">
+          <button type="submit" disabled={salvando} className="u-btn u-btn-primary px-5 py-2.5">
+            {salvando && <Loader2 className="h-4 w-4 animate-spin" />}
             {editando ? 'Salvar alterações' : 'Cadastrar disco'}
           </button>
-          <Link to="/" className="flex items-center px-5 py-2.5 rounded-lg border border-border-strong text-sm hover:border-faint">
+          <Link to="/" className="u-btn u-btn-ghost px-5 py-2.5">
             Cancelar
           </Link>
         </div>

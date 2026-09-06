@@ -2,6 +2,7 @@ import { useState } from 'react'
 import api, { getApiBaseUrl, setApiBaseUrl } from '../api/client'
 import { CheckCircle2, XCircle, Loader2, Sun, Moon, Check } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
+import SectionHeading from '../components/SectionHeading'
 
 export default function Configuracoes() {
   const [url, setUrl] = useState(getApiBaseUrl())
@@ -29,41 +30,31 @@ export default function Configuracoes() {
     }
   }
 
+  const opcaoTema = (valor, Icon, rotulo) => (
+    <button
+      type="button"
+      onClick={() => setTema(valor)}
+      className={`u-btn ${tema === valor ? 'u-btn-primary' : 'u-btn-ghost'}`}
+    >
+      <Icon className="h-4 w-4" /> {rotulo}
+    </button>
+  )
+
   return (
     <div className="max-w-md">
-      <h1 className="text-xl font-semibold mb-2">Configurações</h1>
+      <h1 className="mb-6 text-2xl">Configurações</h1>
 
-      <section className="mb-8">
-        <h2 className="text-sm font-semibold text-accent uppercase tracking-wide mb-3">Aparência</h2>
+      <section className="mb-10">
+        <SectionHeading className="mb-4">Aparência</SectionHeading>
 
-        <p className="text-sm text-muted mb-2">Tema</p>
-        <div className="flex gap-2 mb-5">
-          <button
-            type="button"
-            onClick={() => setTema('light')}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm border transition-colors ${
-              tema === 'light'
-                ? 'bg-accent text-accent-contrast border-accent'
-                : 'border-border-strong text-muted hover:border-accent hover:text-accent'
-            }`}
-          >
-            <Sun className="w-4 h-4" /> Claro
-          </button>
-          <button
-            type="button"
-            onClick={() => setTema('dark')}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm border transition-colors ${
-              tema === 'dark'
-                ? 'bg-accent text-accent-contrast border-accent'
-                : 'border-border-strong text-muted hover:border-accent hover:text-accent'
-            }`}
-          >
-            <Moon className="w-4 h-4" /> Escuro
-          </button>
+        <p className="mb-2 text-sm text-muted">Tema</p>
+        <div className="mb-6 flex gap-2">
+          {opcaoTema('light', Sun, 'Claro')}
+          {opcaoTema('dark', Moon, 'Escuro')}
         </div>
 
-        <p className="text-sm text-muted mb-2">Cor de destaque</p>
-        <div className="flex flex-wrap gap-3">
+        <p className="mb-2 text-sm text-muted">Cor de destaque</p>
+        <div className="flex flex-wrap gap-2.5">
           {accents.map((a) => (
             <button
               key={a.key}
@@ -71,53 +62,48 @@ export default function Configuracoes() {
               onClick={() => setAccent(a.key)}
               title={a.label}
               aria-label={a.label}
-              className="w-8 h-8 rounded-full flex items-center justify-center border-2 transition-transform hover:scale-110"
-              style={{ backgroundColor: a.color, borderColor: accent === a.key ? a.color : 'transparent' }}
+              className="flex h-9 w-9 items-center justify-center rounded-[3px] transition-transform hover:scale-105"
+              style={{
+                backgroundColor: a.color,
+                boxShadow: accent === a.key ? `0 0 0 2px var(--color-background), 0 0 0 4px ${a.color}` : 'none',
+              }}
             >
-              {accent === a.key && <Check className="w-4 h-4 text-accent-contrast" />}
+              {accent === a.key && <Check className="h-4 w-4 text-white" />}
             </button>
           ))}
         </div>
       </section>
 
       <section>
-        <h2 className="text-sm font-semibold text-accent uppercase tracking-wide mb-3">Conexão com a API</h2>
-        <p className="text-sm text-muted mb-6">
-          Endereço da API. No navegador, use <code className="text-foreground">http://localhost:5000/api</code>.
-          No app Android, use o IP da máquina que roda a API na sua rede local, por exemplo{' '}
-          <code className="text-foreground">http://192.168.0.10:5000/api</code>.
+        <SectionHeading className="mb-4">Conexão com a API</SectionHeading>
+        <p className="mb-5 text-sm leading-relaxed text-muted">
+          Endereço da API. No navegador, use <code className="u-ident text-foreground">http://localhost:5000/api</code>. No app
+          Android, use o IP da máquina que roda a API na sua rede local, por exemplo{' '}
+          <code className="u-ident text-foreground">http://192.168.0.10:5000/api</code>.
         </p>
         <form onSubmit={salvar} className="flex flex-col gap-3">
           <input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="http://192.168.0.10:5000/api"
-            className="bg-surface border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+            className="u-field"
           />
           <div className="flex gap-2">
-            <button
-              type="submit"
-              className="bg-accent hover:bg-accent-hover text-accent-contrast font-medium px-4 py-2 rounded-lg text-sm"
-            >
+            <button type="submit" className="u-btn u-btn-primary px-4 py-2">
               Salvar
             </button>
-            <button
-              type="button"
-              onClick={testar}
-              disabled={testando}
-              className="border border-border-strong hover:border-accent px-4 py-2 rounded-lg text-sm flex items-center gap-2 disabled:opacity-50"
-            >
-              {testando && <Loader2 className="w-4 h-4 animate-spin" />} Testar conexão
+            <button type="button" onClick={testar} disabled={testando} className="u-btn u-btn-ghost px-4 py-2">
+              {testando && <Loader2 className="h-4 w-4 animate-spin" />} Testar conexão
             </button>
           </div>
           {status === 'ok' && (
-            <p className="flex items-center gap-2 text-emerald-500 text-sm">
-              <CheckCircle2 className="w-4 h-4" /> Conectado com sucesso!
+            <p className="flex items-center gap-2 text-sm text-emerald-500">
+              <CheckCircle2 className="h-4 w-4" /> Conectado com sucesso.
             </p>
           )}
           {status === 'erro' && (
-            <p className="flex items-center gap-2 text-red-500 text-sm">
-              <XCircle className="w-4 h-4" /> Não foi possível conectar. Verifique o endereço e se a API está rodando.
+            <p className="flex items-center gap-2 text-sm text-red-500">
+              <XCircle className="h-4 w-4" /> Não foi possível conectar. Verifique o endereço e se a API está rodando.
             </p>
           )}
         </form>

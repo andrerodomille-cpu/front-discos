@@ -8,13 +8,13 @@ export default function GraficoLinha({ titulo, dados, formatarValor = (v) => v }
   const pathArea = dados.length > 0 ? `${pathLinha} L100,100 L0,100 Z` : ''
 
   return (
-    <div className="bg-surface border border-border rounded-xl p-4 flex flex-col gap-3">
-      <h3 className="text-sm font-semibold text-muted">{titulo}</h3>
+    <section className="flex flex-col gap-3 border-t-2 border-border-strong pt-3">
+      <h3 className="u-sec">{titulo}</h3>
       {dados.length === 0 ? (
         <p className="text-xs text-faint">Sem dados suficientes.</p>
       ) : (
         <>
-          <div className="relative w-full h-28">
+          <div className="relative h-28 w-full">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
               <line x1="0" y1="100" x2="100" y2="100" stroke="var(--app-border)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
               <path d={pathArea} fill="var(--app-accent)" opacity="0.1" stroke="none" />
@@ -39,14 +39,14 @@ export default function GraficoLinha({ titulo, dados, formatarValor = (v) => v }
           </div>
           <div className="flex justify-between gap-1">
             {dados.map(([label, valor], i) => (
-              <div key={i} className="flex flex-col items-center gap-0.5 min-w-0">
-                <span className="text-[11px] text-faint tabular-nums">{formatarValor(valor)}</span>
-                <span className="text-[11px] text-muted truncate">{label}</span>
+              <div key={i} className="flex min-w-0 flex-col items-center gap-0.5">
+                <span className="u-ident text-faint">{formatarValor(valor)}</span>
+                <span className="truncate text-[11px] text-muted">{label}</span>
               </div>
             ))}
           </div>
         </>
       )}
-    </div>
+    </section>
   )
 }

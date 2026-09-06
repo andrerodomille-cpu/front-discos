@@ -1,14 +1,10 @@
 export default function DiscoListItemSkeleton() {
   return (
-    <div className="flex items-center gap-3 px-3 py-2 animate-pulse">
-      <div className="w-11 h-11 rounded bg-surface-2 shrink-0" />
-      <div className="flex-1 min-w-0 flex flex-col gap-2">
-        <div className="h-3.5 bg-surface-2 rounded w-2/5" />
-        <div className="h-3 bg-surface-2 rounded w-1/4" />
-      </div>
-      <div className="hidden sm:block h-3 bg-surface-2 rounded w-24 shrink-0" />
-      <div className="hidden md:block h-3 bg-surface-2 rounded w-24 shrink-0" />
-      <div className="h-3 bg-surface-2 rounded w-8 shrink-0" />
+    <div className="flex animate-pulse items-center gap-3 py-2.5 pl-4 pr-3">
+      <div className="h-3 w-[28%] shrink-0 rounded-[2px] bg-surface-2" />
+      <div className="h-3 w-2/5 rounded-[2px] bg-surface-2" />
+      <div className="ml-auto hidden h-3 w-24 shrink-0 rounded-[2px] bg-surface-2 md:block" />
+      <div className="h-3 w-8 shrink-0 rounded-[2px] bg-surface-2" />
     </div>
   )
 }

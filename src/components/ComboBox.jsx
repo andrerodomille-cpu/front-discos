@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronsUpDown, Check } from 'lucide-react'
 
-const inputClass =
-  'w-full bg-surface border border-border rounded-lg px-3 py-2 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-accent'
+const inputClass = 'u-field pr-9'
 
 /**
  * Combo com autopreenchimento. As opções são filtradas conforme o texto digitado.
@@ -86,7 +85,7 @@ export default function ComboBox({ options, value, onChange, placeholder = 'Sele
       <ChevronsUpDown className="w-4 h-4 text-faint absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
 
       {aberto && (
-        <ul className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-border bg-surface py-1 shadow-lg">
+        <ul className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-[3px] border border-border-strong bg-surface py-1 shadow-lg">
           {filtradas.length === 0 && (
             <li className="px-3 py-2 text-sm text-faint">Nenhum resultado</li>
           )}

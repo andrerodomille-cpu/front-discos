@@ -2,30 +2,30 @@ export default function GraficoBarraHorizontal({ titulo, dados, sufixo = '', for
   const max = Math.max(...dados.map(([, valor]) => valor), 1)
 
   return (
-    <div className="bg-surface border border-border rounded-xl p-4 flex flex-col gap-3">
-      <h3 className="text-sm font-semibold text-muted">{titulo}</h3>
+    <section className="flex flex-col gap-3 border-t-2 border-border-strong pt-3">
+      <h3 className="u-sec">{titulo}</h3>
       {dados.length === 0 ? (
         <p className="text-xs text-faint">Sem dados suficientes.</p>
       ) : (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           {dados.map(([label, valor]) => (
-            <div key={label} className="flex items-center gap-2">
-              <span className="text-xs text-muted w-20 sm:w-28 shrink-0 truncate" title={label}>
+            <div key={label} className="flex items-center gap-3">
+              <span className="w-20 shrink-0 truncate text-xs text-muted sm:w-28" title={label}>
                 {label}
               </span>
-              <div className="flex-1 h-5 bg-surface-2 rounded-r overflow-hidden">
+              <div className="h-4 flex-1 bg-surface-2">
                 <div
-                  className="h-full bg-accent rounded-r transition-all"
-                  style={{ width: `${(valor / max) * 100}%` }}
+                  className="h-full bg-accent transition-[width] duration-300"
+                  style={{ width: `${Math.max((valor / max) * 100, 1.5)}%` }}
                 />
               </div>
-              <span className="text-xs text-faint w-14 text-right shrink-0 tabular-nums">
+              <span className="u-ident w-14 shrink-0 text-right text-faint">
                 {formatarValor ? formatarValor(valor) : `${valor}${sufixo}`}
               </span>
             </div>
           ))}
         </div>
       )}
-    </div>
+    </section>
   )
 }

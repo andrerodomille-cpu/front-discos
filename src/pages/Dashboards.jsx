@@ -98,9 +98,9 @@ export default function Dashboards() {
   const linhaDoTempo = useMemo(() => contarEntradasPorAno(discos), [discos])
 
   return (
-    <div className="pb-16 sm:pb-14 flex flex-col gap-6">
+    <div className="flex flex-col gap-8 pb-16">
       <div>
-        <h1 className="text-xl font-semibold mb-4">Dashboards</h1>
+        <h1 className="mb-4 text-2xl">Dashboards</h1>
         <DashboardTabs />
       </div>
 
@@ -114,7 +114,7 @@ export default function Dashboards() {
         <div className="text-center py-20 text-faint">Cadastre discos para ver os dashboards.</div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+          <div className="grid grid-cols-2 gap-x-5 gap-y-5 sm:grid-cols-3">
             <DashboardTile icon={Disc3} label="Total de discos" value={estatisticas.totalDiscos} />
             <DashboardTile icon={Disc} label="Total de CDs" value={estatisticas.totalCDs} />
             <DashboardTile icon={Disc3} label="Total de vinis" value={estatisticas.totalVinis} />
@@ -124,7 +124,7 @@ export default function Dashboards() {
             <DashboardTile icon={Users} label="Total de músicos cadastrados" value={estatisticas.totalMusicos} />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-8 lg:grid-cols-2">
             <GraficoColunas titulo="Discos por década" dados={porDecada} />
             <GraficoBarraHorizontal titulo="Discos por gênero" dados={porGenero} />
             <GraficoBarraHorizontal titulo="Discos por país" dados={porPais} />

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { Loader2, Trash2, ArrowLeft, Plus } from 'lucide-react'
 import api from '../api/client'
+import SectionHeading from '../components/SectionHeading'
 
 const ESTADO_INICIAL = {
   titulo: '',
@@ -17,8 +18,7 @@ const ESTADO_INICIAL = {
 
 const PRECO_INICIAL = { id_loja: '', valor: '' }
 
-const inputClass =
-  'bg-surface border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent'
+const inputClass = 'u-field'
 const labelClass = 'flex flex-col gap-1 text-sm'
 const spanClass = 'text-muted'
 
@@ -40,8 +40,8 @@ function Field({ label, children, className = '' }) {
 function Secao({ titulo, children }) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold text-accent uppercase tracking-wide">{titulo}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">{children}</div>
+      <SectionHeading>{titulo}</SectionHeading>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">{children}</div>
     </section>
   )
 }
@@ -205,11 +205,11 @@ export default function WishlistForm() {
         )}
       </div>
 
-      <h1 className="text-xl font-semibold mb-6">{editando ? 'Editar item da wishlist' : 'Novo item na wishlist'}</h1>
+      <h1 className="mb-6 text-2xl">{editando ? 'Editar item da wishlist' : 'Novo item na wishlist'}</h1>
 
-      {erro && <p className="text-red-500 text-sm mb-4">{erro}</p>}
+      {erro && <p className="mb-4 text-sm text-red-500">{erro}</p>}
 
-      <form onSubmit={salvar} className="flex flex-col gap-8">
+      <form onSubmit={salvar} className="flex flex-col gap-9">
         <Secao titulo="Identificação">
           <Field label="Título *" className="md:col-span-2">
             <input value={form.titulo} onChange={set('titulo')} required className={inputClass} />
@@ -261,20 +261,20 @@ export default function WishlistForm() {
         </Secao>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-accent uppercase tracking-wide">Preços pesquisados</h2>
+          <SectionHeading>Preços pesquisados</SectionHeading>
 
           {precos.length === 0 && <p className="text-sm text-faint">Nenhum preço pesquisado ainda.</p>}
           {precos.map((p, index) => (
             <div
               key={p.id_wishlist_preco ?? `local-${index}`}
-              className="grid grid-cols-1 sm:grid-cols-[1.2fr_0.8fr_auto] gap-2 items-center bg-surface/60 border border-border rounded-lg p-2"
+              className="grid grid-cols-1 items-center gap-2 border-l-2 border-border-strong pl-3 sm:grid-cols-[1.2fr_0.8fr_auto]"
             >
-              <span className="text-sm truncate">{p.loja_nome || listas.lojas.find((l) => String(l.id_loja) === String(p.id_loja))?.nome || '—'}</span>
-              <span className="text-sm">R$ {Number(p.valor).toFixed(2)}</span>
+              <span className="truncate text-sm">{p.loja_nome || listas.lojas.find((l) => String(l.id_loja) === String(p.id_loja))?.nome || '—'}</span>
+              <span className="text-sm tabular-nums">R$ {Number(p.valor).toFixed(2)}</span>
               <button
                 type="button"
                 onClick={() => (editando ? removerPrecoRemoto(p.id_wishlist_preco) : removerPrecoLocal(index))}
-                className="p-2 text-muted hover:text-red-500 hover:bg-surface-2 rounded justify-self-end"
+                className="justify-self-end rounded-[3px] p-2 text-muted hover:bg-surface-2 hover:text-red-500"
                 aria-label="Remover preço"
               >
                 <Trash2 className="w-4 h-4" />
@@ -304,24 +304,20 @@ export default function WishlistForm() {
             <button
               type="button"
               onClick={editando ? adicionarPrecoRemoto : adicionarPrecoLocal}
-              className="p-2 text-accent hover:bg-surface-2 rounded justify-self-end"
+              className="justify-self-end rounded-[3px] p-2 text-accent hover:bg-surface-2"
               aria-label="Adicionar preço"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="h-4 w-4" />
             </button>
           </div>
         </section>
 
-        <div className="flex gap-3 pt-2 pb-8">
-          <button
-            type="submit"
-            disabled={salvando}
-            className="flex items-center gap-2 bg-accent hover:bg-accent-hover disabled:opacity-50 text-accent-contrast font-medium px-5 py-2.5 rounded-lg"
-          >
-            {salvando && <Loader2 className="w-4 h-4 animate-spin" />}
+        <div className="flex gap-3 pb-8 pt-2">
+          <button type="submit" disabled={salvando} className="u-btn u-btn-primary px-5 py-2.5">
+            {salvando && <Loader2 className="h-4 w-4 animate-spin" />}
             {editando ? 'Salvar alterações' : 'Adicionar à wishlist'}
           </button>
-          <Link to="/wishlist" className="flex items-center px-5 py-2.5 rounded-lg border border-border-strong text-sm hover:border-faint">
+          <Link to="/wishlist" className="u-btn u-btn-ghost px-5 py-2.5">
             Cancelar
           </Link>
         </div>

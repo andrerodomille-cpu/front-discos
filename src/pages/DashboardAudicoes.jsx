@@ -106,58 +106,60 @@ export default function DashboardAudicoes() {
   }
 
   return (
-    <div className="pb-16 sm:pb-14 flex flex-col gap-6">
+    <div className="flex flex-col gap-8 pb-16">
       <div>
-        <h1 className="text-xl font-semibold mb-4">Dashboards</h1>
+        <h1 className="mb-4 text-2xl">Dashboards</h1>
         <DashboardTabs />
       </div>
 
       {audicoes.length === 0 ? (
-        <div className="text-center py-20 text-faint">Registre audições para ver este dashboard.</div>
+        <div className="py-20 text-center text-faint">Registre audições para ver este dashboard.</div>
       ) : (
         <>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <GraficoBarraHorizontal titulo="🎵 Discos mais ouvidos" dados={discosMaisOuvidos} />
-            <GraficoBarraHorizontal titulo="🎤 Artistas mais ouvidos" dados={artistasMaisOuvidos} />
-            <GraficoColunas titulo="📅 Audições por mês" dados={audicoesPorMes} />
-            <GraficoLinha titulo="📈 Evolução das audições ao longo dos anos" dados={evolucaoPorAno} />
+          <div className="grid grid-cols-1 gap-x-8 gap-y-8 lg:grid-cols-2">
+            <GraficoBarraHorizontal titulo="Discos mais ouvidos" dados={discosMaisOuvidos} />
+            <GraficoBarraHorizontal titulo="Artistas mais ouvidos" dados={artistasMaisOuvidos} />
+            <GraficoColunas titulo="Audições por mês" dados={audicoesPorMes} />
+            <GraficoLinha titulo="Evolução das audições ao longo dos anos" dados={evolucaoPorAno} />
           </div>
 
-          <section className="flex flex-col gap-3">
-            <h2 className="text-sm font-semibold text-muted">📀 Últimos discos ouvidos</h2>
-            <div className="border border-border rounded-lg divide-y divide-border overflow-hidden bg-surface">
+          <section className="flex flex-col gap-3 border-t-2 border-border-strong pt-3">
+            <h2 className="u-sec">Últimos discos ouvidos</h2>
+            <div className="divide-y divide-border border-y border-border">
               {ultimasAudicoes.map((a) => (
                 <Link
                   key={a.id_audicao}
                   to={a.id_disco ? `/discos/${a.id_disco}` : '/audicoes'}
-                  className="flex items-center gap-3 px-3 py-2.5 hover:bg-surface-2 transition-colors"
+                  className="u-spine flex items-center gap-3 py-2.5 pl-4 pr-3 transition-colors hover:bg-surface-2"
                 >
-                  <div className="w-11 h-11 rounded bg-surface-2 flex items-center justify-center overflow-hidden shrink-0">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[2px] bg-surface-2">
                     {a.url_capa ? (
                       <img
                         src={a.url_capa}
                         alt=""
-                        className="w-full h-full object-cover"
+                        className="h-full w-full object-cover"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none'
                         }}
                       />
                     ) : (
-                      <Disc3 className="w-5 h-5 text-faint" />
+                      <Disc3 className="h-5 w-5 text-faint" />
                     )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{a.disco_titulo || 'Disco removido'}</p>
-                    <p className="text-xs text-muted truncate">
-                      {[a.artista_nome, formatarData(a.data_audicao)].filter(Boolean).join(' • ')}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-display text-sm font-semibold tracking-[-0.01em]">
+                      {a.disco_titulo || 'Disco removido'}
+                    </p>
+                    <p className="truncate text-xs text-muted">
+                      {[a.artista_nome, formatarData(a.data_audicao)].filter(Boolean).join('  ·  ')}
                     </p>
                   </div>
-                  <span className="flex items-center gap-1 text-xs text-muted shrink-0" title="Vezes ouvido">
-                    <Repeat className="w-3.5 h-3.5" /> {a.vezesOuvido}x
+                  <span className="flex shrink-0 items-center gap-1 text-xs text-muted" title="Vezes ouvido">
+                    <Repeat className="h-3.5 w-3.5" /> {a.vezesOuvido}×
                   </span>
                   {a.nota ? (
-                    <span className="flex items-center gap-1 text-xs text-amber-500 shrink-0">
-                      <Star className="w-3.5 h-3.5 fill-amber-500" /> {a.nota}
+                    <span className="flex shrink-0 items-center gap-1 text-xs text-amber-500">
+                      <Star className="h-3.5 w-3.5 fill-amber-500" /> {a.nota}
                     </span>
                   ) : null}
                 </Link>

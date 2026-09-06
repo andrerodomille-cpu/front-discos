@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Disc3, Clock, Star, Users, Loader2 } from 'lucide-react'
+import { Disc3, Clock, Star, Loader2 } from 'lucide-react'
 import api from '../api/client'
 import DashboardTabs from '../components/DashboardTabs'
 import DashboardTile from '../components/DashboardTile'
@@ -107,29 +107,29 @@ export default function DashboardArtistas() {
   }, [discosDoArtista, audicoes])
 
   return (
-    <div className="pb-16 sm:pb-14 flex flex-col gap-6">
+    <div className="flex flex-col gap-8 pb-16">
       <div>
-        <h1 className="text-xl font-semibold mb-4">Dashboards</h1>
+        <h1 className="mb-4 text-2xl">Dashboards</h1>
         <DashboardTabs />
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-20 text-faint gap-2">
-          <Loader2 className="w-5 h-5 animate-spin" /> Carregando dashboards...
+        <div className="flex items-center justify-center gap-2 py-20 text-faint">
+          <Loader2 className="h-5 w-5 animate-spin" /> Carregando dashboards…
         </div>
       ) : erro ? (
-        <p className="text-center py-20 text-red-500 text-sm">Erro ao carregar dados: {erro}</p>
+        <p className="py-20 text-center text-sm text-red-500">Erro ao carregar dados: {erro}</p>
       ) : artistas.length === 0 ? (
-        <div className="text-center py-20 text-faint">Cadastre discos com artista para ver este dashboard.</div>
+        <div className="py-20 text-center text-faint">Cadastre discos com artista para ver este dashboard.</div>
       ) : (
         <>
           <div>
-            <label className="flex flex-col gap-1.5 text-sm max-w-sm">
+            <label className="flex max-w-sm flex-col gap-1.5 text-sm">
               <span className="text-muted">Artista</span>
               <select
                 value={artistaSelecionado}
                 onChange={(e) => setArtistaSelecionado(e.target.value)}
-                className="bg-surface border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                className="u-field"
               >
                 {artistas.map((a) => (
                   <option key={a.id_artista} value={a.id_artista}>
@@ -142,7 +142,7 @@ export default function DashboardArtistas() {
 
           {nomeArtista && (
             <>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+              <div className="grid grid-cols-2 gap-x-5 gap-y-5 sm:grid-cols-3">
                 <DashboardTile icon={Disc3} label="Quantidade de discos" value={discosDoArtista.length} />
                 <DashboardTile
                   icon={Clock}
@@ -157,35 +157,34 @@ export default function DashboardArtistas() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <section className="bg-surface border border-border rounded-xl p-4 flex flex-col gap-3">
-                  <h3 className="text-sm font-semibold text-muted">Ordem cronológica</h3>
+              <div className="grid grid-cols-1 gap-x-8 gap-y-8 lg:grid-cols-2">
+                <section className="flex flex-col gap-3 border-t-2 border-border-strong pt-3">
+                  <h3 className="u-sec">Ordem cronológica</h3>
                   <div className="flex flex-col divide-y divide-border">
                     {ordemCronologica.map((d) => (
                       <Link
                         key={d.id_disco}
                         to={`/discos/${d.id_disco}`}
-                        className="flex items-center gap-3 py-2 hover:text-accent transition-colors"
+                        className="flex items-center gap-3 py-2 transition-colors hover:text-accent"
                       >
-                        <span className="text-xs text-faint w-10 shrink-0 tabular-nums">{d.ano_lancamento || '—'}</span>
-                        <span className="text-sm truncate">{d.titulo}</span>
+                        <span className="w-10 shrink-0 text-xs tabular-nums text-faint">{d.ano_lancamento || '—'}</span>
+                        <span className="truncate text-sm">{d.titulo}</span>
                       </Link>
                     ))}
                   </div>
                 </section>
 
-                <section className="bg-surface border border-border rounded-xl p-4 flex flex-col gap-3">
-                  <h3 className="text-sm font-semibold text-muted flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-accent" /> Músicos participantes
-                  </h3>
+                <section className="flex flex-col gap-3 border-t-2 border-border-strong pt-3">
+                  <h3 className="u-sec">Músicos participantes</h3>
                   {musicos.length === 0 ? (
                     <p className="text-xs text-faint">Nenhum músico registrado na ficha técnica.</p>
                   ) : (
-                    <div className="flex flex-col divide-y divide-border">
+                    <div className="u-credits">
                       {musicos.map(([nome, instrumentos]) => (
-                        <div key={nome} className="py-2">
-                          <p className="text-sm">{nome}</p>
-                          {instrumentos && <p className="text-xs text-muted">{instrumentos}</p>}
+                        <div key={nome} className="u-credit">
+                          <span className="k text-foreground">{nome}</span>
+                          <span className="fill" />
+                          <span className="v">{instrumentos || '—'}</span>
                         </div>
                       ))}
                     </div>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Search, LayoutGrid, List, Disc3, Headphones, CalendarClock, Star } from 'lucide-react'
+import { Plus, Search, LayoutGrid, List, Headphones, Star } from 'lucide-react'
 import api from '../api/client'
 import DiscoCard from '../components/DiscoCard'
 import DiscoListItem from '../components/DiscoListItem'
@@ -30,7 +30,7 @@ function compararDiscos(a, b, ordenacao) {
 }
 
 function formatarDataAudicao(data) {
-  return new Date(data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+  return new Date(data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
 function contarAudicoesRecentes(audicoes) {
@@ -48,6 +48,7 @@ export default function Home() {
   const [filtroGenero, setFiltroGenero] = useState('')
   const [filtroFormato, setFiltroFormato] = useState('')
   const [audicoes, setAudicoes] = useState([])
+  const [animou, setAnimou] = useState(false)
 
   useEffect(() => {
     localStorage.setItem('visualizacaoDiscos', visualizacao)
@@ -74,6 +75,7 @@ export default function Home() {
       })
       .finally(() => {
         if (ativo) setLoading(false)
+        setTimeout(() => ativo && setAnimou(true), 900)
       })
     return () => {
       ativo = false
@@ -111,117 +113,109 @@ export default function Home() {
       .sort((a, b) => compararDiscos(a, b, ordenacao))
   }, [discos, busca, filtroGenero, filtroFormato, ordenacao])
 
-  const selectClass =
-    'bg-surface border border-border rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-accent flex-1 sm:flex-none min-w-0'
+  const selectClass = 'u-field w-full text-sm sm:w-auto sm:flex-1 sm:min-w-[8rem]'
+  const temColecao = !loading && !erro && discos.length > 0
+  const revealCls = !animou ? 'u-reveal' : ''
 
   return (
-    <div className="pb-16 sm:pb-14">
-      {!loading && !erro && discos.length > 0 && (
-        <div className="flex flex-col gap-3 mb-6">
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <div className="bg-surface border border-border rounded-xl p-3 flex flex-col gap-1 min-w-0">
-              <div className="flex items-center gap-1.5 text-muted">
-                <Disc3 className="w-3.5 h-3.5 text-accent shrink-0" />
-                <span className="text-xs truncate">Discos</span>
-              </div>
-              <span className="text-lg sm:text-xl font-semibold truncate">{discos.length}</span>
-            </div>
-            <div className="bg-surface border border-border rounded-xl p-3 flex flex-col gap-1 min-w-0">
-              <div className="flex items-center gap-1.5 text-muted">
-                <CalendarClock className="w-3.5 h-3.5 text-accent shrink-0" />
-                <span className="text-xs truncate">Audições (30 dias)</span>
-              </div>
-              <span className="text-lg sm:text-xl font-semibold truncate">{audicoesRecentes}</span>
-            </div>
-          </div>
+    <div className="pb-16">
+      <header className="mb-7">
+        <h1 className="text-[clamp(1.9rem,5vw,2.6rem)]">A Coleção</h1>
+        {temColecao && (
+          <p className="mt-1.5 text-sm text-muted">
+            <span className="font-display text-base font-bold tracking-[-0.02em] text-foreground tabular-nums">
+              {discos.length}
+            </span>{' '}
+            {discos.length === 1 ? 'disco' : 'discos'} no acervo
+            {audicoesRecentes > 0 && (
+              <>
+                {' · '}
+                <span className="font-display text-base font-bold tracking-[-0.02em] text-foreground tabular-nums">
+                  {audicoesRecentes}
+                </span>{' '}
+                ouvido{audicoesRecentes === 1 ? '' : 's'} em 30 dias
+              </>
+            )}
+          </p>
+        )}
+      </header>
 
-          <Link
-            to="/audicoes"
-            className="bg-surface border border-border rounded-xl p-3 flex items-center gap-3 hover:border-accent transition-colors"
-          >
-            <div className="w-12 h-12 rounded-lg bg-surface-2 flex items-center justify-center overflow-hidden shrink-0">
-              {capaUltimaAudicao ? (
-                <img
-                  src={capaUltimaAudicao}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none'
-                  }}
-                />
-              ) : (
-                <Headphones className="w-5 h-5 text-faint" />
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5 text-muted mb-0.5">
-                <Headphones className="w-3.5 h-3.5 text-accent shrink-0" />
-                <span className="text-xs">Última audição</span>
-              </div>
-              {ultimaAudicao ? (
-                <>
-                  <p className="text-sm font-semibold truncate">{ultimaAudicao.disco_titulo || 'Disco removido'}</p>
-                  <p className="text-xs text-muted truncate">
-                    {[ultimaAudicao.artista_nome, formatarDataAudicao(ultimaAudicao.data_audicao), ultimaAudicao.local]
-                      .filter(Boolean)
-                      .join(' • ')}
-                  </p>
-                </>
-              ) : (
-                <p className="text-sm text-faint">Nenhuma audição registrada ainda.</p>
-              )}
-            </div>
-            {ultimaAudicao?.nota ? (
-              <span className="flex items-center gap-1 text-xs text-amber-500 shrink-0">
-                <Star className="w-3.5 h-3.5 fill-amber-500" /> {ultimaAudicao.nota}
-              </span>
-            ) : null}
-          </Link>
-        </div>
+      {temColecao && ultimaAudicao && (
+        <Link
+          to="/audicoes"
+          className="u-spine mb-7 flex items-center gap-4 border-y border-border py-3 pl-4 pr-2 transition-colors hover:bg-surface-2"
+        >
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[2px] bg-surface-2">
+            {capaUltimaAudicao ? (
+              <img
+                src={capaUltimaAudicao}
+                alt=""
+                className="h-full w-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            ) : (
+              <Headphones className="h-5 w-5 text-faint" />
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="mb-0.5 text-[11px] text-faint">Ouvido por último</p>
+            <p className="truncate font-display font-semibold tracking-[-0.01em]">
+              {ultimaAudicao.disco_titulo || 'Disco removido'}
+            </p>
+            <p className="truncate text-xs text-muted">
+              {[ultimaAudicao.artista_nome, formatarDataAudicao(ultimaAudicao.data_audicao), ultimaAudicao.local]
+                .filter(Boolean)
+                .join('  ·  ')}
+            </p>
+          </div>
+          {ultimaAudicao?.nota ? (
+            <span className="flex shrink-0 items-center gap-1 pr-2 text-xs text-amber-500">
+              <Star className="h-3.5 w-3.5 fill-amber-500" /> {ultimaAudicao.nota}
+            </span>
+          ) : null}
+        </Link>
       )}
 
-      <div className="mb-6">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
-          <input
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            placeholder="Buscar por título, artista, gênero, gravadora..."
-            className="w-full bg-surface border border-border rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
-          />
-        </div>
+      <div className="relative mb-4">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
+        <input
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          placeholder="Buscar por título, artista, gênero, gravadora…"
+          className="u-field pl-9"
+        />
       </div>
 
       <Link
         to="/discos/novo"
         title="Novo disco"
         aria-label="Novo disco"
-        className="fixed z-30 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-6 flex items-center justify-center bg-accent hover:bg-accent-hover text-accent-contrast p-4 rounded-full shadow-lg shadow-black/30"
+        className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-5 z-30 flex items-center justify-center rounded-full bg-accent p-4 text-accent-contrast shadow-[0_6px_20px_-4px_rgba(0,0,0,0.4)] transition-colors hover:bg-accent-hover lg:bottom-8"
       >
-        <Plus className="w-6 h-6" />
+        <Plus className="h-6 w-6" />
       </Link>
 
-      {loading && (
-        <div>
-          {visualizacao === 'cards' ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <DiscoCardSkeleton key={i} />
-              ))}
-            </div>
-          ) : (
-            <div className="border border-border rounded-lg divide-y divide-border overflow-hidden bg-surface">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <DiscoListItemSkeleton key={i} />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      {loading &&
+        (visualizacao === 'cards' ? (
+          <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <DiscoCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : (
+          <div className="divide-y divide-border border-y border-border">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <DiscoListItemSkeleton key={i} />
+            ))}
+          </div>
+        ))}
 
       {erro && !loading && (
-        <div className="text-center py-20 text-red-500 text-sm">
-          Erro ao carregar discos: {erro}.<br />
+        <div className="py-20 text-center text-sm text-red-500">
+          Erro ao carregar discos: {erro}.
+          <br />
           Verifique o endereço da API em{' '}
           <Link to="/configuracoes" className="underline">
             Configurações
@@ -231,16 +225,16 @@ export default function Home() {
       )}
 
       {!loading && !erro && discos.length === 0 && (
-        <div className="text-center py-20 text-faint">Nenhum disco cadastrado ainda.</div>
+        <div className="py-20 text-center text-faint">Nenhum disco cadastrado ainda. Toque em + para começar.</div>
       )}
 
-      {!loading && !erro && discos.length > 0 && (
+      {temColecao && (
         <>
-          <div className="flex flex-wrap items-center gap-2 mb-3">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
             <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)} className={selectClass}>
               <option value="recentes">Mais recentes</option>
-              <option value="titulo">Título (A-Z)</option>
-              <option value="artista">Artista (A-Z)</option>
+              <option value="titulo">Título (A–Z)</option>
+              <option value="artista">Artista (A–Z)</option>
               <option value="ano_desc">Ano (mais novo)</option>
               <option value="ano_asc">Ano (mais antigo)</option>
               <option value="avaliacao">Avaliação</option>
@@ -248,59 +242,65 @@ export default function Home() {
             <select value={filtroGenero} onChange={(e) => setFiltroGenero(e.target.value)} className={selectClass}>
               <option value="">Todos os gêneros</option>
               {generos.map((g) => (
-                <option key={g} value={g}>{g}</option>
+                <option key={g} value={g}>
+                  {g}
+                </option>
               ))}
             </select>
             <select value={filtroFormato} onChange={(e) => setFiltroFormato(e.target.value)} className={selectClass}>
               <option value="">Todos os formatos</option>
               {formatos.map((f) => (
-                <option key={f} value={f}>{f}</option>
+                <option key={f} value={f}>
+                  {f}
+                </option>
               ))}
             </select>
-            <div className="flex gap-1 ml-auto">
+            <div className="ml-auto flex gap-1">
               <button
                 type="button"
                 onClick={() => setVisualizacao('cards')}
-                title="Ver em cards"
-                aria-label="Ver em cards"
-                className={`p-1.5 rounded-lg border transition-colors ${
+                title="Ver em capas"
+                aria-label="Ver em capas"
+                className={`rounded-[3px] border p-2 transition-colors ${
                   visualizacao === 'cards'
-                    ? 'bg-accent text-accent-contrast border-accent'
-                    : 'border-border-strong text-muted hover:border-accent hover:text-accent'
+                    ? 'border-accent bg-accent text-accent-contrast'
+                    : 'border-border-strong text-muted hover:text-foreground'
                 }`}
               >
-                <LayoutGrid className="w-4 h-4" />
+                <LayoutGrid className="h-4 w-4" />
               </button>
               <button
                 type="button"
                 onClick={() => setVisualizacao('lista')}
-                title="Ver em lista"
-                aria-label="Ver em lista"
-                className={`p-1.5 rounded-lg border transition-colors ${
+                title="Ver em lombadas"
+                aria-label="Ver em lombadas"
+                className={`rounded-[3px] border p-2 transition-colors ${
                   visualizacao === 'lista'
-                    ? 'bg-accent text-accent-contrast border-accent'
-                    : 'border-border-strong text-muted hover:border-accent hover:text-accent'
+                    ? 'border-accent bg-accent text-accent-contrast'
+                    : 'border-border-strong text-muted hover:text-foreground'
                 }`}
               >
-                <List className="w-4 h-4" />
+                <List className="h-4 w-4" />
               </button>
             </div>
           </div>
 
-          <p className="text-sm text-faint mb-3">
+          <p className="mb-4 text-xs text-faint tabular-nums">
             {discosFiltrados.length} {discosFiltrados.length === 1 ? 'disco' : 'discos'}
           </p>
 
           {discosFiltrados.length === 0 ? (
-            <div className="text-center py-20 text-faint">Nenhum disco encontrado para esses filtros.</div>
+            <div className="py-20 text-center text-faint">Nenhum disco encontrado para esses filtros.</div>
           ) : visualizacao === 'cards' ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {discosFiltrados.map((disco) => (
-                <DiscoCard key={disco.id_disco} disco={disco} />
+            <div className={`grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${revealCls}`}>
+              {discosFiltrados.map((disco, i) => (
+                <div key={disco.id_disco} style={{ '--i': Math.min(i, 24) }}>
+                  <DiscoCard disco={disco} />
+                </div>
               ))}
             </div>
           ) : (
-            <div className="border border-border rounded-lg divide-y divide-border overflow-hidden bg-surface">
+            <div className="divide-y divide-border border-y border-border">
               {discosFiltrados.map((disco) => (
                 <DiscoListItem key={disco.id_disco} disco={disco} />
               ))}

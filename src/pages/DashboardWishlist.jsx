@@ -128,23 +128,23 @@ export default function DashboardWishlist() {
   const maisCaros = useMemo(() => discosMaisCaros(itens), [itens])
 
   return (
-    <div className="pb-16 sm:pb-14 flex flex-col gap-6">
+    <div className="flex flex-col gap-8 pb-16">
       <div>
-        <h1 className="text-xl font-semibold mb-4">Dashboards</h1>
+        <h1 className="mb-4 text-2xl">Dashboards</h1>
         <DashboardTabs />
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-20 text-faint gap-2">
-          <Loader2 className="w-5 h-5 animate-spin" /> Carregando dashboards...
+        <div className="flex items-center justify-center gap-2 py-20 text-faint">
+          <Loader2 className="h-5 w-5 animate-spin" /> Carregando dashboards…
         </div>
       ) : erro ? (
-        <p className="text-center py-20 text-red-500 text-sm">Erro ao carregar dados: {erro}</p>
+        <p className="py-20 text-center text-sm text-red-500">Erro ao carregar dados: {erro}</p>
       ) : itens.length === 0 ? (
-        <div className="text-center py-20 text-faint">Adicione itens à wishlist para ver este dashboard.</div>
+        <div className="py-20 text-center text-faint">Adicione itens à wishlist para ver este dashboard.</div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+          <div className="grid grid-cols-2 gap-x-5 gap-y-5 sm:grid-cols-3">
             <DashboardTile icon={Heart} label="Total de discos desejados" value={itens.length} />
             <DashboardTile
               icon={TrendingDown}
@@ -173,7 +173,7 @@ export default function DashboardWishlist() {
             />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-8 lg:grid-cols-2">
             <GraficoLinha
               titulo={maisPesquisado ? `Preço ao longo do tempo — ${maisPesquisado.item.titulo}` : 'Preço ao longo do tempo'}
               dados={precoNoTempo}

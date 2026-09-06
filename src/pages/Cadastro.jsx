@@ -79,60 +79,56 @@ export default function Cadastro() {
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-xl font-semibold mb-4">{cfg.label}</h1>
+      <h1 className="mb-5 text-2xl">{cfg.label}</h1>
 
-      <form onSubmit={criar} className="flex gap-2 mb-6">
+      <form onSubmit={criar} className="mb-6 flex gap-2">
         <input
           value={novoNome}
           onChange={(e) => setNovoNome(e.target.value)}
-          placeholder={`Novo ${cfg.singular.toLowerCase()}...`}
-          className="flex-1 bg-surface border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+          placeholder={`Novo ${cfg.singular.toLowerCase()}…`}
+          className="u-field flex-1"
         />
-        <button
-          type="submit"
-          disabled={salvando}
-          className="flex items-center gap-1 bg-accent hover:bg-accent-hover disabled:opacity-50 text-accent-contrast font-medium px-3 py-2 rounded-lg text-sm shrink-0"
-        >
-          <Plus className="w-4 h-4" /> Adicionar
+        <button type="submit" disabled={salvando} className="u-btn u-btn-primary shrink-0 px-3 py-2">
+          <Plus className="h-4 w-4" /> Adicionar
         </button>
       </form>
 
-      {erro && <p className="text-red-500 text-sm mb-4">{erro}</p>}
+      {erro && <p className="mb-4 text-sm text-red-500">{erro}</p>}
 
       {loading ? (
-        <div className="flex items-center gap-2 text-faint py-10 justify-center">
-          <Loader2 className="w-5 h-5 animate-spin" /> Carregando...
+        <div className="flex items-center justify-center gap-2 py-10 text-faint">
+          <Loader2 className="h-5 w-5 animate-spin" /> Carregando…
         </div>
       ) : itens.length === 0 ? (
-        <p className="text-faint text-sm">Nenhum item cadastrado.</p>
+        <p className="text-sm text-faint">Nenhum item cadastrado.</p>
       ) : (
-        <ul className="divide-y divide-border border border-border rounded-lg overflow-hidden">
+        <ul className="divide-y divide-border border-y border-border">
           {itens.map((item) => {
             const id = item[cfg.idField]
             const emEdicao = editandoId === id
             return (
-              <li key={id} className="flex items-center gap-2 px-3 py-2 bg-surface">
+              <li key={id} className="u-spine flex items-center gap-2 py-2 pl-4 pr-3">
                 {emEdicao ? (
                   <>
                     <input
                       value={editandoNome}
                       onChange={(e) => setEditandoNome(e.target.value)}
                       autoFocus
-                      className="flex-1 bg-surface-2 border border-border-strong rounded px-2 py-1 text-sm"
+                      className="u-field flex-1 py-1"
                     />
                     <button
                       onClick={() => salvarEdicao(id)}
-                      className="p-1.5 text-accent hover:bg-surface-2 rounded"
+                      className="rounded-[3px] p-1.5 text-accent hover:bg-surface-2"
                       aria-label="Salvar"
                     >
-                      <Check className="w-4 h-4" />
+                      <Check className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => setEditandoId(null)}
-                      className="p-1.5 text-muted hover:bg-surface-2 rounded"
+                      className="rounded-[3px] p-1.5 text-muted hover:bg-surface-2"
                       aria-label="Cancelar"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="h-4 w-4" />
                     </button>
                   </>
                 ) : (
@@ -140,17 +136,17 @@ export default function Cadastro() {
                     <span className="flex-1 text-sm">{item.nome}</span>
                     <button
                       onClick={() => iniciarEdicao(item)}
-                      className="p-1.5 text-muted hover:text-accent hover:bg-surface-2 rounded"
+                      className="rounded-[3px] p-1.5 text-muted hover:bg-surface-2 hover:text-accent"
                       aria-label="Editar"
                     >
-                      <Pencil className="w-4 h-4" />
+                      <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => remover(id)}
-                      className="p-1.5 text-muted hover:text-red-500 hover:bg-surface-2 rounded"
+                      className="rounded-[3px] p-1.5 text-muted hover:bg-surface-2 hover:text-red-500"
                       aria-label="Remover"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </>
                 )}

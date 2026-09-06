@@ -1,43 +1,30 @@
 import { Link } from 'react-router-dom'
-import { Disc3, Star } from 'lucide-react'
+import { Star } from 'lucide-react'
 
 export default function DiscoListItem({ disco }) {
   return (
     <Link
       to={`/discos/${disco.id_disco}`}
-      className="flex items-center gap-3 px-3 py-2 hover:bg-surface-2 transition-colors"
+      className="u-spine flex items-center gap-3 py-2.5 pl-4 pr-3 transition-colors hover:bg-surface-2"
     >
-      <div className="w-11 h-11 rounded bg-surface-2 flex items-center justify-center overflow-hidden shrink-0">
-        {disco.url_capa ? (
-          <img
-            src={disco.url_capa}
-            alt={disco.titulo}
-            className="w-full h-full object-cover"
-            loading="lazy"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none'
-            }}
-          />
-        ) : (
-          <Disc3 className="w-5 h-5 text-faint" />
-        )}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="font-medium text-sm truncate">{disco.titulo}</p>
-        <p className="text-xs text-muted truncate">{disco.artista_nome || 'Artista desconhecido'}</p>
-      </div>
-      <p className="hidden sm:block text-xs text-muted truncate w-32 shrink-0">{disco.genero_nome || '—'}</p>
-      <p className="hidden md:block text-xs text-muted truncate w-32 shrink-0">{disco.formato_nome || '—'}</p>
-      <p className="text-xs text-faint w-10 shrink-0 text-right">{disco.ano_lancamento || '—'}</p>
-      <p className="flex items-center gap-1 text-xs text-amber-500 w-10 shrink-0 justify-end">
+      <span className="u-condensed w-[34%] shrink-0 truncate text-[13px] uppercase text-muted">
+        {disco.artista_nome || 'Artista desconhecido'}
+      </span>
+      <span className="min-w-0 flex-1 truncate text-sm">{disco.titulo}</span>
+      <span className="hidden w-28 shrink-0 truncate text-xs text-faint md:block">{disco.genero_nome || '—'}</span>
+      <span className="u-ident hidden w-24 shrink-0 truncate text-faint lg:block">
+        {disco.numero_catalogo || ''}
+      </span>
+      <span className="w-10 shrink-0 text-right text-xs tabular-nums text-faint">{disco.ano_lancamento || '—'}</span>
+      <span className="flex w-9 shrink-0 items-center justify-end gap-1 text-xs text-amber-500">
         {disco.avaliacao ? (
           <>
-            <Star className="w-3 h-3 fill-amber-500" /> {disco.avaliacao}
+            <Star className="h-3 w-3 fill-amber-500" /> {disco.avaliacao}
           </>
         ) : (
           <span className="text-faint">—</span>
         )}
-      </p>
+      </span>
     </Link>
   )
 }
