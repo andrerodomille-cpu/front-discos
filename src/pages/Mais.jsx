@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Settings, ChevronRight, LogOut, UserCircle } from 'lucide-react'
+import { Settings, ChevronRight, LogOut, UserCircle, Heart } from 'lucide-react'
 import { ENTIDADES } from '../api/entidades'
 import { useAuth } from '../context/AuthContext'
 import SectionHeading from '../components/SectionHeading'
@@ -26,6 +26,18 @@ export default function Mais() {
           </div>
         </div>
       )}
+
+      <SectionHeading className="mb-3">Coleção</SectionHeading>
+      <div className="mb-8 divide-y divide-border border-y border-border">
+        <Link
+          to="/wishlist"
+          className="u-spine flex items-center gap-3 py-3 pl-4 pr-3 transition-colors hover:bg-surface-2"
+        >
+          <Heart className="h-4 w-4 shrink-0 text-faint" />
+          <span className="flex-1 text-sm">Wishlist</span>
+          <ChevronRight className="h-4 w-4 shrink-0 text-faint" />
+        </Link>
+      </div>
 
       <SectionHeading className="mb-3">Cadastros</SectionHeading>
       <div className="mb-8 divide-y divide-border border-y border-border">

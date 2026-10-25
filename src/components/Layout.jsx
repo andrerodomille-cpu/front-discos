@@ -1,16 +1,16 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Settings, Disc3, Library, Heart, Headphones, LayoutDashboard, MoreHorizontal } from 'lucide-react'
+import { Settings, Disc3, Library, Shuffle, Headphones, LayoutDashboard, MoreHorizontal } from 'lucide-react'
 
 const ABAS = [
   { to: '/', label: 'Coleção', icon: Library, ativo: (p) => p === '/' || p.startsWith('/discos') },
-  { to: '/wishlist', label: 'Wishlist', icon: Heart, ativo: (p) => p.startsWith('/wishlist') },
+  { to: '/sugestao', label: 'Sugestão', icon: Shuffle, ativo: (p) => p.startsWith('/sugestao') },
   { to: '/audicoes', label: 'Audições', icon: Headphones, ativo: (p) => p.startsWith('/audicoes') },
   { to: '/dashboards', label: 'Dashboards', icon: LayoutDashboard, ativo: (p) => p.startsWith('/dashboards') },
   {
     to: '/mais',
     label: 'Mais',
     icon: MoreHorizontal,
-    ativo: (p) => p === '/mais' || p.startsWith('/cadastros') || p === '/configuracoes',
+    ativo: (p) => p === '/mais' || p.startsWith('/wishlist') || p.startsWith('/cadastros') || p === '/configuracoes',
   },
 ]
 

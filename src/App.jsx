@@ -12,6 +12,7 @@ import WishlistForm from './pages/WishlistForm'
 import Audicoes from './pages/Audicoes'
 import AudicaoForm from './pages/AudicaoForm'
 import Mais from './pages/Mais'
+import Sugestao from './pages/Sugestao'
 import Dashboards from './pages/Dashboards'
 import DashboardAudicoes from './pages/DashboardAudicoes'
 import DashboardFinanceiro from './pages/DashboardFinanceiro'
@@ -49,6 +50,7 @@ function App() {
           <Route path="/dashboards/wishlist" element={<DashboardWishlist />} />
           <Route path="/dashboards/artistas" element={<DashboardArtistas />} />
           <Route path="/dashboards/musicos" element={<DashboardMusicos />} />
+          <Route path="/sugestao" element={<Sugestao />} />
           <Route path="/mais" element={<Mais />} />
           <Route path="/configuracoes" element={<Configuracoes />} />
         </Route>
