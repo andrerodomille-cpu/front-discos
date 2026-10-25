@@ -12,21 +12,43 @@ function visualizacaoInicial() {
   return salva === 'lista' ? 'lista' : 'cards'
 }
 
+const textoOuVazio = (v) => v || ''
+const numeroOuNulo = (v) => (v === null || v === undefined || v === '' ? null : Number(v))
+const dataOuNulo = (v) => (v ? new Date(v).getTime() : null)
+
+// campo: extrai o valor; dir: 1 crescente, -1 decrescente; texto: compara como string
+const ORDENACOES = {
+  recentes: { label: 'Cadastrados recentemente', campo: (d) => d.id_disco, dir: -1 },
+  titulo: { label: 'Título (A–Z)', campo: (d) => textoOuVazio(d.titulo), dir: 1, texto: true },
+  artista: { label: 'Artista (A–Z)', campo: (d) => textoOuVazio(d.artista_nome), dir: 1, texto: true },
+  lancamento_desc: { label: 'Lançamento (mais novo)', campo: (d) => numeroOuNulo(d.ano_lancamento), dir: -1 },
+  lancamento_asc: { label: 'Lançamento (mais antigo)', campo: (d) => numeroOuNulo(d.ano_lancamento), dir: 1 },
+  prensagem_desc: { label: 'Prensagem (mais nova)', campo: (d) => numeroOuNulo(d.ano_prensagem), dir: -1 },
+  prensagem_asc: { label: 'Prensagem (mais antiga)', campo: (d) => numeroOuNulo(d.ano_prensagem), dir: 1 },
+  compra_desc: { label: 'Compra (mais recente)', campo: (d) => dataOuNulo(d.data_compra), dir: -1 },
+  compra_asc: { label: 'Compra (mais antiga)', campo: (d) => dataOuNulo(d.data_compra), dir: 1 },
+  valor_pago_desc: { label: 'Valor pago (maior)', campo: (d) => numeroOuNulo(d.valor_pago), dir: -1 },
+  valor_pago_asc: { label: 'Valor pago (menor)', campo: (d) => numeroOuNulo(d.valor_pago), dir: 1 },
+  valor_estimado_desc: { label: 'Valor estimado (maior)', campo: (d) => numeroOuNulo(d.valor_estimado), dir: -1 },
+  valor_estimado_asc: { label: 'Valor estimado (menor)', campo: (d) => numeroOuNulo(d.valor_estimado), dir: 1 },
+  avaliacao: { label: 'Avaliação (maior)', campo: (d) => numeroOuNulo(d.avaliacao), dir: -1 },
+}
+
+function ordenacaoInicial() {
+  const salva = localStorage.getItem('ordenacaoDiscos')
+  return ORDENACOES[salva] ? salva : 'recentes'
+}
+
+// Discos sem o valor informado vão sempre para o fim; empate desempata por título
 function compararDiscos(a, b, ordenacao) {
-  switch (ordenacao) {
-    case 'titulo':
-      return a.titulo.localeCompare(b.titulo, 'pt-BR')
-    case 'artista':
-      return (a.artista_nome || '').localeCompare(b.artista_nome || '', 'pt-BR')
-    case 'ano_desc':
-      return (b.ano_lancamento || 0) - (a.ano_lancamento || 0)
-    case 'ano_asc':
-      return (a.ano_lancamento || 0) - (b.ano_lancamento || 0)
-    case 'avaliacao':
-      return (b.avaliacao || 0) - (a.avaliacao || 0)
-    default:
-      return b.id_disco - a.id_disco
-  }
+  const { campo, dir, texto } = ORDENACOES[ordenacao] || ORDENACOES.recentes
+  const va = campo(a)
+  const vb = campo(b)
+  const aVazio = va === null || va === ''
+  const bVazio = vb === null || vb === ''
+  if (aVazio !== bVazio) return aVazio ? 1 : -1
+  const cmp = aVazio ? 0 : texto ? va.localeCompare(vb, 'pt-BR') : va - vb
+  return cmp * dir || a.titulo.localeCompare(b.titulo, 'pt-BR')
 }
 
 function formatarDataAudicao(data) {
@@ -44,7 +66,7 @@ export default function Home() {
   const [erro, setErro] = useState(null)
   const [busca, setBusca] = useState('')
   const [visualizacao, setVisualizacao] = useState(visualizacaoInicial)
-  const [ordenacao, setOrdenacao] = useState('recentes')
+  const [ordenacao, setOrdenacao] = useState(ordenacaoInicial)
   const [filtroGenero, setFiltroGenero] = useState('')
   const [filtroFormato, setFiltroFormato] = useState('')
   const [audicoes, setAudicoes] = useState([])
@@ -53,6 +75,10 @@ export default function Home() {
   useEffect(() => {
     localStorage.setItem('visualizacaoDiscos', visualizacao)
   }, [visualizacao])
+
+  useEffect(() => {
+    localStorage.setItem('ordenacaoDiscos', ordenacao)
+  }, [ordenacao])
 
   useEffect(() => {
     api
@@ -232,12 +258,11 @@ export default function Home() {
         <>
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)} className={selectClass}>
-              <option value="recentes">Mais recentes</option>
-              <option value="titulo">Título (A–Z)</option>
-              <option value="artista">Artista (A–Z)</option>
-              <option value="ano_desc">Ano (mais novo)</option>
-              <option value="ano_asc">Ano (mais antigo)</option>
-              <option value="avaliacao">Avaliação</option>
+              {Object.entries(ORDENACOES).map(([valor, { label }]) => (
+                <option key={valor} value={valor}>
+                  {label}
+                </option>
+              ))}
             </select>
             <select value={filtroGenero} onChange={(e) => setFiltroGenero(e.target.value)} className={selectClass}>
               <option value="">Todos os gêneros</option>
