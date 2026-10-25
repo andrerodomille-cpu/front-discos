@@ -88,6 +88,10 @@ export default function DiscoDetalhe() {
     disco.diametro_polegadas && `${disco.diametro_polegadas}″`,
     disco.mono && 'Mono',
     disco.ano_lancamento,
+    disco.genero_nome &&
+      (disco.subgenero_nome && disco.subgenero_nome !== 'Indefinido'
+        ? `${disco.genero_nome} / ${disco.subgenero_nome}`
+        : disco.genero_nome),
   ].filter(Boolean)
 
   const temDetalhesTecnicos = Boolean(

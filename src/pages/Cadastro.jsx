@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
-import { Plus, Pencil, Trash2, X, Check, Loader2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, X, Check, Loader2, ChevronDown, ChevronRight } from 'lucide-react'
 import api from '../api/client'
 import { ENTIDADES } from '../api/entidades'
+import SubgenerosEditor from '../components/SubgenerosEditor'
 
 export default function Cadastro() {
   const { tipo } = useParams()
@@ -15,6 +16,8 @@ export default function Cadastro() {
   const [editandoId, setEditandoId] = useState(null)
   const [editandoNome, setEditandoNome] = useState('')
   const [salvando, setSalvando] = useState(false)
+  const [expandidoId, setExpandidoId] = useState(null)
+  const comSubgeneros = tipo === 'generos'
 
   useEffect(() => {
     if (!cfg) return
@@ -106,8 +109,10 @@ export default function Cadastro() {
           {itens.map((item) => {
             const id = item[cfg.idField]
             const emEdicao = editandoId === id
+            const expandido = comSubgeneros && expandidoId === id
             return (
-              <li key={id} className="u-spine flex items-center gap-2 py-2 pl-4 pr-3">
+              <li key={id}>
+              <div className="u-spine flex items-center gap-2 py-2 pl-4 pr-3">
                 {emEdicao ? (
                   <>
                     <input
@@ -133,7 +138,26 @@ export default function Cadastro() {
                   </>
                 ) : (
                   <>
-                    <span className="flex-1 text-sm">{item.nome}</span>
+                    {comSubgeneros ? (
+                      <button
+                        type="button"
+                        onClick={() => setExpandidoId(expandido ? null : id)}
+                        aria-expanded={expandido}
+                        className="flex flex-1 items-center gap-1.5 text-left text-sm"
+                      >
+                        {expandido ? (
+                          <ChevronDown className="h-4 w-4 shrink-0 text-faint" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 shrink-0 text-faint" />
+                        )}
+                        <span className="flex-1">{item.nome}</span>
+                        <span className="text-xs tabular-nums text-faint">
+                          {item.subgeneros?.length || 0} subgênero{item.subgeneros?.length === 1 ? '' : 's'}
+                        </span>
+                      </button>
+                    ) : (
+                      <span className="flex-1 text-sm">{item.nome}</span>
+                    )}
                     <button
                       onClick={() => iniciarEdicao(item)}
                       className="rounded-[3px] p-1.5 text-muted hover:bg-surface-2 hover:text-accent"
@@ -150,6 +174,17 @@ export default function Cadastro() {
                     </button>
                   </>
                 )}
+              </div>
+              {expandido && (
+                <SubgenerosEditor
+                  genero={item}
+                  onAlterado={() => {
+                    setErro(null)
+                    recarregar()
+                  }}
+                  onErro={setErro}
+                />
+              )}
               </li>
             )
           })}

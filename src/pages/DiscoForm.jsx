@@ -11,6 +11,7 @@ const ESTADO_INICIAL = {
   id_formato: '',
   id_artista: '',
   id_genero: '',
+  id_subgenero: '',
   id_gravadora: '',
   ano_lancamento: '',
   quantidade_discos: 1,
@@ -107,6 +108,7 @@ export default function DiscoForm() {
             id_formato: d.id_formato ?? '',
             id_artista: d.id_artista ?? '',
             id_genero: d.id_genero ?? '',
+            id_subgenero: d.id_subgenero ?? '',
             id_gravadora: d.id_gravadora ?? '',
             ano_lancamento: d.ano_lancamento ?? '',
             quantidade_discos: d.quantidade_discos ?? 1,
@@ -153,6 +155,17 @@ export default function DiscoForm() {
     setForm((prev) => ({ ...prev, [campo]: valor }))
   }
 
+  const subgenerosDoGenero =
+    listas.generos.find((g) => String(g.id_genero) === String(form.id_genero))?.subgeneros || []
+
+  // Ao trocar o gênero, o subgênero volta para o "Indefinido" do novo gênero
+  const selecionarGenero = (e) => {
+    const id_genero = e.target.value
+    const subs = listas.generos.find((g) => String(g.id_genero) === id_genero)?.subgeneros || []
+    const padrao = subs.find((s) => s.nome === 'Indefinido') || subs[0]
+    setForm((prev) => ({ ...prev, id_genero, id_subgenero: padrao ? padrao.id_subgenero : '' }))
+  }
+
   const salvar = async (e) => {
     e.preventDefault()
     if (!form.titulo.trim()) {
@@ -166,6 +179,7 @@ export default function DiscoForm() {
       id_formato: numOuNulo(form.id_formato),
       id_artista: numOuNulo(form.id_artista),
       id_genero: numOuNulo(form.id_genero),
+      id_subgenero: numOuNulo(form.id_subgenero),
       id_gravadora: numOuNulo(form.id_gravadora),
       ano_lancamento: numOuNulo(form.ano_lancamento),
       quantidade_discos: numOuNulo(form.quantidade_discos) || 1,
@@ -287,10 +301,23 @@ export default function DiscoForm() {
             </select>
           </Field>
           <Field label="Gênero">
-            <select value={form.id_genero} onChange={set('id_genero')} className={inputClass}>
+            <select value={form.id_genero} onChange={selecionarGenero} className={inputClass}>
               <option value="">Selecione...</option>
               {listas.generos.map((g) => (
                 <option key={g.id_genero} value={g.id_genero}>{g.nome}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Subgênero">
+            <select
+              value={form.id_subgenero}
+              onChange={set('id_subgenero')}
+              disabled={!form.id_genero}
+              className={inputClass}
+            >
+              {!form.id_genero && <option value="">Selecione um gênero</option>}
+              {subgenerosDoGenero.map((s) => (
+                <option key={s.id_subgenero} value={s.id_subgenero}>{s.nome}</option>
               ))}
             </select>
           </Field>
