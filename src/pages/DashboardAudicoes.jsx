@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Disc3, Star, Repeat, Loader2 } from 'lucide-react'
 import api from '../api/client'
 import DashboardTabs from '../components/DashboardTabs'
-import GraficoBarraHorizontal from '../components/GraficoBarraHorizontal'
 import GraficoColunas from '../components/GraficoColunas'
 import GraficoLinha from '../components/GraficoLinha'
 
@@ -55,6 +54,58 @@ function contarPorDisco(audicoes) {
   return contagem
 }
 
+function CardRanking({ item, posicao }) {
+  const conteudo = (
+    <>
+      <div className="relative aspect-square w-full overflow-hidden rounded-[2px] bg-surface-2 flex items-center justify-center">
+        {item.capa ? (
+          <img
+            src={item.capa}
+            alt=""
+            className="h-full w-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none'
+            }}
+          />
+        ) : (
+          <Disc3 className="h-8 w-8 text-faint" />
+        )}
+        <span className="absolute left-1.5 top-1.5 rounded-[2px] bg-black/70 px-1.5 py-0.5 text-xs font-semibold text-white">
+          #{posicao}
+        </span>
+      </div>
+      <div className="mt-2 min-w-0">
+        <p className="truncate font-display text-sm font-semibold tracking-[-0.01em]">{item.titulo}</p>
+        {item.subtitulo && <p className="truncate text-xs text-muted">{item.subtitulo}</p>}
+        <p className="mt-0.5 flex items-center gap-1 text-xs text-muted">
+          <Repeat className="h-3.5 w-3.5" /> {item.qtd} {item.qtd === 1 ? 'audição' : 'audições'}
+        </p>
+      </div>
+    </>
+  )
+  const classe = 'block rounded-[2px] border border-border bg-surface p-2 transition-colors hover:bg-surface-2'
+  return item.to ? (
+    <Link to={item.to} className={classe}>
+      {conteudo}
+    </Link>
+  ) : (
+    <div className={classe}>{conteudo}</div>
+  )
+}
+
+function SecaoCards({ titulo, itens }) {
+  return (
+    <section className="flex flex-col gap-3 border-t-2 border-border-strong pt-3">
+      <h2 className="u-sec">{titulo}</h2>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        {itens.map((item, i) => (
+          <CardRanking key={item.id} item={item} posicao={i + 1} />
+        ))}
+      </div>
+    </section>
+  )
+}
+
 export default function DashboardAudicoes() {
   const [audicoes, setAudicoes] = useState([])
   const [discos, setDiscos] = useState([])
@@ -73,20 +124,56 @@ export default function DashboardAudicoes() {
       .finally(() => setLoading(false))
   }, [])
 
-  const discosMaisOuvidos = useMemo(
-    () => ranking(audicoes, (a) => a.id_disco, (a) => a.disco_titulo || 'Disco removido'),
-    [audicoes],
-  )
-  const artistasMaisOuvidos = useMemo(
-    () => ranking(audicoes, (a) => a.artista_nome, (a) => a.artista_nome),
-    [audicoes],
-  )
+  const capaPorDisco = useMemo(() => {
+    const mapa = {}
+    discos.forEach((d) => {
+      mapa[d.id_disco] = d.url_capa
+    })
+    return mapa
+  }, [discos])
+
+  const discosMaisOuvidos = useMemo(() => {
+    const contagem = {}
+    audicoes.forEach((a) => {
+      if (!a.id_disco) return
+      if (!contagem[a.id_disco]) {
+        contagem[a.id_disco] = {
+          id: a.id_disco,
+          titulo: a.disco_titulo || 'Disco removido',
+          subtitulo: a.artista_nome,
+          capa: capaPorDisco[a.id_disco] || null,
+          qtd: 0,
+        }
+      }
+      contagem[a.id_disco].qtd += 1
+    })
+    return Object.values(contagem)
+      .sort((a, b) => b.qtd - a.qtd)
+      .slice(0, 8)
+      .map((d) => ({ ...d, to: `/discos/${d.id}` }))
+  }, [audicoes, capaPorDisco])
+
+  const artistasMaisOuvidos = useMemo(() => {
+    const contagem = {}
+    audicoes.forEach((a) => {
+      if (!a.artista_nome) return
+      if (!contagem[a.artista_nome]) {
+        contagem[a.artista_nome] = { id: a.artista_nome, titulo: a.artista_nome, capa: null, qtd: 0 }
+      }
+      const c = contagem[a.artista_nome]
+      c.qtd += 1
+      if (!c.capa && capaPorDisco[a.id_disco]) c.capa = capaPorDisco[a.id_disco]
+    })
+    return Object.values(contagem)
+      .sort((a, b) => b.qtd - a.qtd)
+      .slice(0, 8)
+  }, [audicoes, capaPorDisco])
   const audicoesPorMes = useMemo(() => contarPorMes(audicoes), [audicoes])
   const evolucaoPorAno = useMemo(() => contarPorAno(audicoes), [audicoes])
   const contagemPorDisco = useMemo(() => contarPorDisco(audicoes), [audicoes])
 
   const ultimasAudicoes = useMemo(() => {
-    return audicoes.slice(0, 5).map((a) => ({
+    return audicoes.slice(0, 10).map((a) => ({
       ...a,
       url_capa: discos.find((d) => d.id_disco === a.id_disco)?.url_capa || null,
       vezesOuvido: contagemPorDisco[a.id_disco] || 1,
@@ -116,9 +203,10 @@ export default function DashboardAudicoes() {
         <div className="py-20 text-center text-faint">Registre audições para ver este dashboard.</div>
       ) : (
         <>
+          <SecaoCards titulo="Discos mais ouvidos" itens={discosMaisOuvidos} />
+          <SecaoCards titulo="Artistas mais ouvidos" itens={artistasMaisOuvidos} />
+
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 lg:grid-cols-2">
-            <GraficoBarraHorizontal titulo="Discos mais ouvidos" dados={discosMaisOuvidos} />
-            <GraficoBarraHorizontal titulo="Artistas mais ouvidos" dados={artistasMaisOuvidos} />
             <GraficoColunas titulo="Audições por mês" dados={audicoesPorMes} />
             <GraficoLinha titulo="Evolução das audições ao longo dos anos" dados={evolucaoPorAno} />
           </div>
